@@ -2,67 +2,28 @@ package EMS_Database.impl;
 
 import EMS_Database.DoesNotExistException;
 import EMS_Database.InitDB;
-import static EMS_Database.InitDB.debugLog;
 import EMS_Database.InputTask;
 import EMS_Database.Interface_TaskData;
+import auth.AuthorizationException;
+import auth.Operation;
+import auth.Permissions;
+import exception.UpdateException;
+
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 /**
- *
  * @author mike
  */
 public class Tasks_Table extends InitDB implements Interface_TaskData {
+    private static final String tableName = "TASKS";
 
-    private String tableName = "TASKS";
-
-    ///////////////////////SPECIAL FUNCTIONS///////////////////////////    
     @Override
-    public String queryEntireTable() {
-	StringBuilder returnQuery = new StringBuilder();
-	try {
-	    PreparedStatement idQueryStmt = dbConnection.prepareStatement("SELECT * FROM TASKS");
-	    ResultSet rs = idQueryStmt.executeQuery();
-
-	    while (rs.next()) {
-		returnQuery.append(rs.getString("UID"));
-		returnQuery.append(",");
-		returnQuery.append(rs.getString("DESCRIPTION"));
-		returnQuery.append(",");
-		returnQuery.append(rs.getString("DETAILS"));
-		returnQuery.append(",");
-		returnQuery.append(rs.getString("TITLE"));
-		returnQuery.append(",");
-		returnQuery.append(rs.getString("STREET"));
-		returnQuery.append(",");
-		returnQuery.append(rs.getString("CITY"));
-		returnQuery.append(",");
-		returnQuery.append(rs.getString("STATE"));
-		returnQuery.append(",");
-		returnQuery.append(rs.getString("ZIPCODE"));
-		returnQuery.append(",");
-		returnQuery.append(rs.getString("COUNTRY"));
-		returnQuery.append(",");
-		returnQuery.append(rs.getTimestamp("STARTDATE"));
-		returnQuery.append(",");
-		returnQuery.append(rs.getTimestamp("ENDDATE"));
-		returnQuery.append(",");
-		returnQuery.append(rs.getString("COMPLETE"));
-		returnQuery.append(",");
-		returnQuery.append(stringToList(rs.getString("MANAGER")));
-		returnQuery.append("\n");
-	    }
-
-	} catch (SQLException sqle) {
-	    sqle.printStackTrace();
-	    System.exit(1);
-	}
-
-	return returnQuery.toString();
+    protected String getTableName() {
+        return tableName;
     }
 
     /**
@@ -73,62 +34,34 @@ public class Tasks_Table extends InitDB implements Interface_TaskData {
      * @return an int of the UID of the created task.
      */
     @Override
-    public int createTask(InputTask task) {
-	int newUID = nextValidUID();
+    public int createTask(InputTask task) throws AuthorizationException, UpdateException {
+        String table = tableName;
+        Permissions.get().checkPermission(table, null, Operation.CREATE);
 
-	try {
-	    //Creating Statement
-	    PreparedStatement AddAddressStmt = dbConnection.prepareStatement("INSERT INTO TASKS VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)");
-	    AddAddressStmt.setInt(1, newUID);
-	    AddAddressStmt.setString(2, task.getDescripton());
-	    AddAddressStmt.setString(3, task.getDetails());
-	    AddAddressStmt.setString(4, task.getTitle());
-	    AddAddressStmt.setString(5, task.getStreet());
-	    AddAddressStmt.setString(6, task.getCity());
-	    AddAddressStmt.setString(7, task.getState());
-	    AddAddressStmt.setString(8, task.getZipcode());
-	    AddAddressStmt.setString(9, task.getCountry());
-	    AddAddressStmt.setTimestamp(10, task.getStartDate());
-	    AddAddressStmt.setTimestamp(11, task.getEndDate());
-	    AddAddressStmt.setInt(12, task.getComplete());
-	    AddAddressStmt.setString(13, listToString(task.getManager()));
+        try {
+            //Creating Statement
+            PreparedStatement AddAddressStmt = dbConnection.prepareStatement("INSERT INTO TASKS VALUES(NULL,?,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+            int column = 0;
+            AddAddressStmt.setString(++column, task.getDescripton());
+            AddAddressStmt.setString(++column, task.getDetails());
+            AddAddressStmt.setString(++column, task.getTitle());
+            AddAddressStmt.setString(++column, task.getStreet());
+            AddAddressStmt.setString(++column, task.getCity());
+            AddAddressStmt.setString(++column, task.getState());
+            AddAddressStmt.setString(++column, task.getZipcode());
+            AddAddressStmt.setString(++column, task.getCountry());
+            AddAddressStmt.setTimestamp(++column, task.getStartDate());
+            AddAddressStmt.setTimestamp(++column, task.getEndDate());
+            AddAddressStmt.setInt(++column, task.getComplete());
+            AddAddressStmt.setString(++column, listToString(task.getManager()));
 
-	    //Execute Statement
-	    AddAddressStmt.executeUpdate();
-
-
-	} catch (SQLException sqle) {
-	    System.err.println(sqle.getMessage()); //seriously bad...
-	} finally {
-	    return newUID;
-	}
+            //Execute Statement
+            return AddAddressStmt.executeUpdate();
+        } catch (SQLException sqle) {
+            throw new UpdateException("Error creating Tasks", sqle);
+        }
     }
 
-    /**
-     * Gets the next valid UID in the Events table
-     *
-     * @return the next valid UID that should be used.
-     */
-    @Override
-    public int nextValidUID() {
-	int newUID = 0;
-	try {
-
-	    PreparedStatement idQueryStmt = dbConnection.prepareStatement("SELECT * FROM TASKS");
-	    ResultSet rs = idQueryStmt.executeQuery();
-
-	    while (rs.next()) {
-		newUID = rs.getInt("UID");
-		//System.out.println(newUID);
-	    }
-	    return (newUID + 1);
-
-	} catch (SQLException sqle) {
-	    System.err.println(sqle.getMessage());
-	    System.exit(1);
-	}
-	return newUID; // should not be zero
-    }
 
     /**
      * This function removes a committee specified by the UID.
@@ -138,152 +71,153 @@ public class Tasks_Table extends InitDB implements Interface_TaskData {
      * @throws DoesNotExistException if the uid does not exist in the table.
      */
     @Override
-    public void removeTask(int uid) throws DoesNotExistException {
-	String table = "TASKS";
-	//checking for existance of that uid
-	boolean exists = false;
-	for (int validID : currentUIDList(table)) {
-	    if (validID == uid) {
-		exists = true;
-		break;
-	    }
-	}
-	//what to do if that uid does not exist
-	if (exists == false) {
-	    debugLog.log(Level.WARNING, "UID={0} does not exist in {1} table. Error occurred while calling removeEvent", new Object[]{uid, table});
-	    throw new DoesNotExistException("check debug log. " + table + " table error.");
-	}
-
-	try {
-	    PreparedStatement idQueryStmt = dbConnection.prepareStatement("DELETE FROM " + table + " WHERE UID=?");
-	    idQueryStmt.setInt(1, uid);
-	    idQueryStmt.executeUpdate();
-
-	} catch (SQLException sqle) {
-	    System.err.println(sqle.getMessage());
-	    System.err.println("Deleting stuff from " + table + " is dangerous...");
-	}
+    public void removeTask(int uid) throws DoesNotExistException, AuthorizationException, UpdateException {
+        remove(uid);
     }
 
     ///////////////////////////GETTERS/////////////////////////////
     @Override
-    public String getDescription(int uid) throws DoesNotExistException {
-	return getDBString("DESCRIPTION", tableName, uid);
+    public String getDescription(int uid) throws DoesNotExistException, AuthorizationException {
+        Permissions.get().checkPermission(tableName, "DESCRIPTION", Operation.VIEW);
+        return getDBString("DESCRIPTION", uid);
     }
 
     @Override
-    public String getDetails(int uid) throws DoesNotExistException {
-	return getDBString("DETAILS", tableName, uid);
+    public String getDetails(int uid) throws DoesNotExistException, AuthorizationException {
+        Permissions.get().checkPermission(tableName, "DETAILS", Operation.VIEW);
+        return getDBString("DETAILS", uid);
     }
 
     @Override
-    public String getTitle(int uid) throws DoesNotExistException {
-	return getDBString("TITLE", tableName, uid);
+    public String getTitle(int uid) throws DoesNotExistException, AuthorizationException {
+        Permissions.get().checkPermission(tableName, "TITLE", Operation.VIEW);
+        return getDBString("TITLE", uid);
     }
 
     @Override
-    public String getStreet(int uid) throws DoesNotExistException {
-	return getDBString("STREET", tableName, uid);
+    public String getStreet(int uid) throws DoesNotExistException, AuthorizationException {
+        Permissions.get().checkPermission(tableName, "STREET", Operation.VIEW);
+        return getDBString("STREET", uid);
     }
 
     @Override
-    public String getCity(int uid) throws DoesNotExistException {
-	return getDBString("CITY", tableName, uid);
+    public String getCity(int uid) throws DoesNotExistException, AuthorizationException {
+        Permissions.get().checkPermission(tableName, "CITY", Operation.VIEW);
+        return getDBString("CITY", uid);
     }
 
     @Override
-    public String getState(int uid) throws DoesNotExistException {
-	return getDBString("STATE", tableName, uid);
+    public String getState(int uid) throws DoesNotExistException, AuthorizationException {
+        Permissions.get().checkPermission(tableName, "STATE", Operation.VIEW);
+        return getDBString("STATE", uid);
     }
 
     @Override
-    public String getZipcode(int uid) throws DoesNotExistException {
-	return getDBString("ZIPCODE", tableName, uid);
+    public String getZipcode(int uid) throws DoesNotExistException, AuthorizationException {
+        Permissions.get().checkPermission(tableName, "ZIPCODE", Operation.VIEW);
+        return getDBString("ZIPCODE", uid);
     }
 
     @Override
-    public String getCountry(int uid) throws DoesNotExistException {
-	return getDBString("COUNTRY", tableName, uid);
+    public String getCountry(int uid) throws DoesNotExistException, AuthorizationException {
+        Permissions.get().checkPermission(tableName, "COUNTRY", Operation.VIEW);
+        return getDBString("COUNTRY", uid);
     }
 
     @Override
-    public Timestamp getStartDate(int uid) throws DoesNotExistException {
-	return getDBTimestamp("STARTDATE", tableName, uid);
+    public Timestamp getStartDate(int uid) throws DoesNotExistException, AuthorizationException {
+        Permissions.get().checkPermission(tableName, "STARTDATE", Operation.VIEW);
+        return getDBTimestamp("STARTDATE", uid);
     }
 
     @Override
-    public Timestamp getEndDate(int uid) throws DoesNotExistException {
-	return getDBTimestamp("ENDDATE", tableName, uid);
+    public Timestamp getEndDate(int uid) throws DoesNotExistException, AuthorizationException {
+        Permissions.get().checkPermission(tableName, "ENDDATE", Operation.VIEW);
+        return getDBTimestamp("ENDDATE", uid);
     }
 
     @Override
-    public int getComplete(int uid) throws DoesNotExistException {
-	return getDBInt("COMPLETE", tableName, uid);
+    public int getComplete(int uid) throws DoesNotExistException, AuthorizationException {
+        Permissions.get().checkPermission(tableName, "COMPLETE", Operation.VIEW);
+        return getDBInt("COMPLETE", uid);
     }
 
     @Override
-    public ArrayList<Integer> getAuthority(int uid) throws DoesNotExistException {
-	return getDBArrayList("MANAGER", tableName, uid);
+    public ArrayList<Integer> getAuthority(int uid) throws DoesNotExistException, AuthorizationException {
+        Permissions.get().checkPermission(tableName, "MANAGER", Operation.VIEW);
+        return getDBArrayList("MANAGER", uid);
     }
 
     /////////////////////////////SETTERS//////////////////////////////
     @Override
-    public void setDescription(int uid, String description) throws DoesNotExistException {
-	setDBString("DESCRIPTION", tableName, uid, description);
+    public void setDescription(int uid, String description) throws DoesNotExistException, AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, "DESCRIPTION", Operation.MODIFY);
+        setDBString("DESCRIPTION", uid, description);
     }
 
     @Override
-    public void setDetails(int uid, String details) throws DoesNotExistException {
-	setDBString("DETAILS", tableName, uid, details);
+    public void setDetails(int uid, String details) throws DoesNotExistException, AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, "DETAILS", Operation.MODIFY);
+        setDBString("DETAILS", uid, details);
     }
 
     @Override
-    public void setTitle(int uid, String title) throws DoesNotExistException {
-	setDBString("TITLE", tableName, uid, title);
+    public void setTitle(int uid, String title) throws DoesNotExistException, AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, "TITLE", Operation.MODIFY);
+        setDBString("TITLE", uid, title);
     }
 
     @Override
-    public void setStreet(int uid, String street) throws DoesNotExistException {
-	setDBString("STREET", tableName, uid, street);
+    public void setStreet(int uid, String street) throws DoesNotExistException, AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, "STREET", Operation.MODIFY);
+        setDBString("STREET", uid, street);
     }
 
     @Override
-    public void setCity(int uid, String city) throws DoesNotExistException {
-	setDBString("CITY", tableName, uid, city);
+    public void setCity(int uid, String city) throws DoesNotExistException, AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, "CITY", Operation.MODIFY);
+        setDBString("CITY", uid, city);
     }
 
     @Override
-    public void setState(int uid, String state) throws DoesNotExistException {
-	setDBString("STATE", tableName, uid, state);
+    public void setState(int uid, String state) throws DoesNotExistException, AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, "STATE", Operation.MODIFY);
+        setDBString("STATE", uid, state);
     }
 
     @Override
-    public void setZipcode(int uid, String zipcode) throws DoesNotExistException {
-	setDBString("ZIPCODE", tableName, uid, zipcode);
+    public void setZipcode(int uid, String zipcode) throws DoesNotExistException, AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, "ZIPCODE", Operation.MODIFY);
+        setDBString("ZIPCODE", uid, zipcode);
     }
 
     @Override
-    public void setCountry(int uid, String country) throws DoesNotExistException {
-	setDBString("COUNTRY", tableName, uid, country);
+    public void setCountry(int uid, String country) throws DoesNotExistException, AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, "COUNTRY", Operation.MODIFY);
+        setDBString("COUNTRY", uid, country);
     }
 
     @Override
-    public void setStartDate(int uid, Timestamp time) throws DoesNotExistException {
-	setDBTimestamp("STARTDATE", tableName, uid, time);
+    public void setStartDate(int uid, Timestamp time) throws DoesNotExistException, AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, "STARTDATE", Operation.MODIFY);
+        setDBTimestamp("STARTDATE", uid, time);
     }
 
     @Override
-    public void setEndDate(int uid, Timestamp time) throws DoesNotExistException {
-	setDBTimestamp("ENDDATE", tableName, uid, time);
+    public void setEndDate(int uid, Timestamp time) throws DoesNotExistException, AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, "ENDDATE", Operation.MODIFY);
+        setDBTimestamp("ENDDATE", uid, time);
     }
 
     @Override
-    public void setComplete(int uid, int complete) throws DoesNotExistException {
-	setDBInt("COMPLETE", tableName, uid, complete);
+    public void setComplete(int uid, int complete) throws DoesNotExistException, AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, "COMPLETE", Operation.MODIFY);
+        setDBInt("COMPLETE", uid, complete);
     }
 
     @Override
-    public void setAuthority(int uid, ArrayList<Integer> committeeList) throws DoesNotExistException {
-	setDBArrayList("MANAGER", tableName, uid, committeeList);
+    public void setAuthority(int uid, ArrayList<Integer> committeeList) throws DoesNotExistException, AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, "MANAGER", Operation.MODIFY);
+        setDBArrayList("MANAGER", uid, committeeList);
     }
 }

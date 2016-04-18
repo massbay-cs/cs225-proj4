@@ -2,15 +2,18 @@ package EMS_Database.impl;
 
 import EMS_Database.DoesNotExistException;
 import EMS_Database.InitDB;
-import static EMS_Database.InitDB.debugLog;
-import EMS_Database.Interface_EventData;
 import EMS_Database.InputEventData;
+import EMS_Database.Interface_EventData;
+import auth.AuthorizationException;
+import auth.Operation;
+import auth.Permissions;
+import exception.UpdateException;
+
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 /**
  * A class to control the Events Data.
@@ -18,10 +21,15 @@ import java.util.logging.Level;
  * @author mike
  */
 public class Events_Table extends InitDB implements Interface_EventData {
+    private static final String tableName = "EVENTS";
 
-    private static String tableName = "EVENTS";
+    @Override
+    protected String getTableName() {
+        return tableName;
+    }
 
-    /////////////////////SPECIAL FUNCTIONS///////////////////////////    
+    /////////////////////SPECIAL FUNCTIONS///////////////////////////
+
     /**
      * Input a new event into the events using InputEvent class to create a
      * valid input object
@@ -30,118 +38,34 @@ public class Events_Table extends InitDB implements Interface_EventData {
      * @return the UID of the created event.
      */
     @Override
-    public int createEvent(InputEventData event) {
-        int newUID = nextValidUID();
-
+    public int createEvent(InputEventData event) throws AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, null, Operation.CREATE);
         try {
             //Creating Statement
-            PreparedStatement AddAddressStmt = dbConnection.prepareStatement("INSERT INTO EVENTS VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-            AddAddressStmt.setInt(1, newUID);
-            AddAddressStmt.setString(2, event.getDescription());
-            AddAddressStmt.setString(3, event.getDetails());
-            AddAddressStmt.setString(4, event.getTitle());
-            AddAddressStmt.setTimestamp(5, event.getStartDate());
-            AddAddressStmt.setTimestamp(6, event.getEndDate());
-            AddAddressStmt.setInt(7, event.getComplete());
-            AddAddressStmt.setString(8, event.getStreet());
-            AddAddressStmt.setString(9, event.getCity());
-            AddAddressStmt.setString(10, event.getState());
-            AddAddressStmt.setString(11, event.getZipcode());
-            AddAddressStmt.setString(12, event.getCountry());
-            AddAddressStmt.setString(13, listToString(event.getOrganizerList())); //inserted as a string
-            AddAddressStmt.setString(14, listToString(event.getSubEventList())); //inserted as a string
-            AddAddressStmt.setString(15, listToString(event.getParticipantList())); //inserted as a string
-            AddAddressStmt.setString(16, listToString(event.getCommittee())); //inserted as a string
+            PreparedStatement AddAddressStmt = dbConnection.prepareStatement("INSERT INTO EVENTS VALUES(NULL,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+            int column = 0;
+            AddAddressStmt.setString(++column, event.getDescription());
+            AddAddressStmt.setString(++column, event.getDetails());
+            AddAddressStmt.setString(++column, event.getDetails());
+            AddAddressStmt.setString(++column, event.getTitle());
+            AddAddressStmt.setTimestamp(++column, event.getStartDate());
+            AddAddressStmt.setTimestamp(++column, event.getEndDate());
+            AddAddressStmt.setInt(++column, event.getComplete());
+            AddAddressStmt.setString(++column, event.getStreet());
+            AddAddressStmt.setString(++column, event.getCity());
+            AddAddressStmt.setString(++column, event.getState());
+            AddAddressStmt.setString(++column, event.getZipcode());
+            AddAddressStmt.setString(++column, event.getCountry());
+            AddAddressStmt.setString(++column, listToString(event.getOrganizerList())); //inserted as a string
+            AddAddressStmt.setString(++column, listToString(event.getSubEventList())); //inserted as a string
+            AddAddressStmt.setString(++column, listToString(event.getParticipantList())); //inserted as a string
+            AddAddressStmt.setString(++column, listToString(event.getCommittee())); //inserted as a string
 
             //Execute Statement
-            AddAddressStmt.executeUpdate();
-
+            return AddAddressStmt.executeUpdate();
         } catch (SQLException sqle) {
-            System.err.println(sqle.getMessage());
-        } finally {
-            return newUID;
+            throw new UpdateException("Error creating event", sqle);
         }
-    }
-
-    /**
-     * Gets the next vaild UID in the Events table
-     *
-     * @return the next valid UID that should be used.
-     */
-    @Override
-    public int nextValidUID() {
-        int newUID = 0;
-        try {
-
-            PreparedStatement idQueryStmt = dbConnection.prepareStatement("SELECT * FROM EVENTS");
-            ResultSet rs = idQueryStmt.executeQuery();
-
-            while (rs.next()) {
-                newUID = rs.getInt("UID");
-                //System.out.println(newUID);
-            }
-            return (newUID + 1);
-
-        } catch (SQLException sqle) {
-            sqle.printStackTrace();
-            System.exit(1);
-        }
-        return newUID; // should not be zero
-    }
-
-    /**
-     * Debug function to return a string to view the entire table contents.
-     *
-     * @return the entire table as a formatted string.
-     */
-    @Override
-    public String queryEntireTable() {
-        StringBuilder returnQuery = new StringBuilder();
-        try {
-            PreparedStatement idQueryStmt = dbConnection.prepareStatement("SELECT * FROM EVENTS");
-            ResultSet rs = idQueryStmt.executeQuery();
-
-            while (rs.next()) {
-                returnQuery.append(rs.getString("UID"));
-                returnQuery.append(",");
-                returnQuery.append(rs.getString("DESCRIPTION"));
-                returnQuery.append(",");
-                returnQuery.append(rs.getString("DETAILS"));
-                returnQuery.append(",");
-                returnQuery.append(rs.getString("TITLE"));
-                returnQuery.append(",");
-                returnQuery.append(rs.getTimestamp("STARTDATE"));
-                returnQuery.append(",");
-                returnQuery.append(rs.getTimestamp("ENDDATE"));
-                returnQuery.append(",");
-                returnQuery.append(rs.getString("COMPLETE"));
-                returnQuery.append(",");
-                returnQuery.append(rs.getString("STREET"));
-                returnQuery.append(",");
-                returnQuery.append(rs.getString("CITY"));
-                returnQuery.append(",");
-                returnQuery.append(rs.getString("STATE"));
-                returnQuery.append(",");
-                returnQuery.append(rs.getString("ZIPCODE"));
-                returnQuery.append(",");
-                returnQuery.append(rs.getString("COUNTRY"));
-                returnQuery.append(",");
-                returnQuery.append(rs.getString("ORGANIZER"));
-                returnQuery.append(",");
-                returnQuery.append(rs.getString("SUBEVENT"));
-                returnQuery.append(",");
-                returnQuery.append(rs.getString("PARTICIPANT"));
-                returnQuery.append(",");
-                returnQuery.append(rs.getString("COMMITTEE"));
-                returnQuery.append("\n");
-            }
-
-        } catch (SQLException sqle) {
-            sqle.printStackTrace();
-            System.exit(1);
-        }
-
-        return returnQuery.toString();
     }
 
     /**
@@ -149,58 +73,56 @@ public class Events_Table extends InitDB implements Interface_EventData {
      *
      * @param uid the UID of the event to be removed.
      * @return a boolean that returns true if removal was successful.
-     * @throws DoesNotExistException if the UID does not exist in the table.
+     * @throws DoesNotExistException  if the UID does not exist in the table.
+     * @throws AuthorizationException if the accessing user does not have authorization to do so
      */
     @Override
-    public void removeEvent(int uid) throws DoesNotExistException {
-        String table = "EVENTS";
-        //checking for existance of that uid
-        boolean exists = false;
-        for (int validID : currentUIDList(table)) {
-            if (validID == uid) {
-                exists = true;
-                break;
-            }
-        }
-        //what to do if that uid does not exist
-        if (exists == false) {
-            debugLog.log(Level.WARNING, "UID={0} does not exist in {1} table. Error occurred while calling removeEvent", new Object[]{uid, table});
-            throw new DoesNotExistException("check debug log. " + table + " table error.");
-        }
-
-        try {
-            PreparedStatement idQueryStmt = dbConnection.prepareStatement("DELETE FROM " + table + " WHERE UID=?");
-            idQueryStmt.setInt(1, uid);
-            idQueryStmt.executeUpdate();
-
-        } catch (SQLException sqle) {
-            System.err.println(sqle.getMessage());
-            System.err.println("Deleting stuff from " + table + " is dangerous...");
-        }
+    public void removeEvent(int uid) throws DoesNotExistException, AuthorizationException, UpdateException {
+        remove(uid);
     }
 
     //////////////////////GETTERS////////////////////////////
+
     /**
      * Returns the specified users description.
      *
      * @param uid the user being searched for
      * @return the description as a String.
-     * @throws DoesNotExistException if the user you are searching for does not
-     * exist.
+     * @throws DoesNotExistException  if the user you are searching for does not
+     * @throws AuthorizationException if the accessing user does not have authorization to do so
      */
     @Override
-    public String getDescription(int uid) throws DoesNotExistException {
-        return getDBString("DESCRIPTION", tableName, uid);
+    public String getDescription(int uid) throws DoesNotExistException, AuthorizationException {
+        Permissions.get().checkPermission(tableName, "DESCRIPTION", Operation.VIEW);
+        return getDBString("DESCRIPTION", uid);
     }
 
+    /**
+     * A method to get the Street of the user with UID specified.
+     *
+     * @param uid the UID of the user in question
+     * @return the Details as a string
+     * @throws DoesNotExistException  if the user does not exist.
+     * @throws AuthorizationException if the accessing user does not have authorization to do so
+     */
     @Override
-    public String getDetails(int uid) throws DoesNotExistException {
-        return getDBString("DETAILS", tableName, uid);
+    public String getDetails(int uid) throws DoesNotExistException, AuthorizationException {
+        Permissions.get().checkPermission(tableName, "DETAILS", Operation.VIEW);
+        return getDBString("DETAILS", uid);
     }
 
+    /**
+     * A method to get the Street of the user with UID specified.
+     *
+     * @param uid the UID of the user in question
+     * @return The title as a string
+     * @throws DoesNotExistException  if the user does not exist.
+     * @throws AuthorizationException if the accessing user does not have authorization to do so
+     */
     @Override
-    public String getTitle(int uid) throws DoesNotExistException {
-        return getDBString("TITLE", tableName, uid);
+    public String getTitle(int uid) throws DoesNotExistException, AuthorizationException {
+        Permissions.get().checkPermission(tableName, "TITLE", Operation.VIEW);
+        return getDBString("TITLE", uid);
     }
 
     /**
@@ -208,155 +130,257 @@ public class Events_Table extends InitDB implements Interface_EventData {
      *
      * @param uid the UID of the user in question.
      * @return A timestamp of the start date
-     * @throws DoesNotExistException if the user does not exist.
+     * @throws DoesNotExistException  if the user does not exist.
+     * @throws AuthorizationException if the accessing user does not have authorization to do so
      */
     @Override
-    public Timestamp getStartDate(int uid) throws DoesNotExistException {
-        return getDBTimestamp("STARTDATE", tableName, uid);
+    public Timestamp getStartDate(int uid) throws DoesNotExistException, AuthorizationException {
+        Permissions.get().checkPermission(tableName, "STARTDATE", Operation.VIEW);
+        return getDBTimestamp("STARTDATE", uid);
     }
 
     /**
-     * I think you can figure out what the rest of these functions do...
+     * A method to get the end date of the user with UID specified.
      *
-     * @param uid
-     * @return
-     * @throws DoesNotExistException
+     * @param uid the UID of the user in question
+     * @return A timestamp of the end date
+     * @throws DoesNotExistException  if the user does not exist.
+     * @throws AuthorizationException if the accessing user does not have authorization to do so
      */
     @Override
-    public Timestamp getEndDate(int uid) throws DoesNotExistException {
-        return getDBTimestamp("ENDDATE", tableName, uid);
+    public Timestamp getEndDate(int uid) throws DoesNotExistException, AuthorizationException {
+        Permissions.get().checkPermission(tableName, "ENDDATE", Operation.VIEW);
+        return getDBTimestamp("ENDDATE", uid);
     }
 
     /**
-     * If you cant figure out what these methods do by now then just ask me.
+     * A method to get
      *
-     * @param uid
+     * @param uid the UID of the user in question
      * @return
-     * @throws DoesNotExistException
+     * @throws DoesNotExistException  if the user does not exist.
+     * @throws AuthorizationException if the accessing user does not have authorization to do so
      */
     @Override
-    public int getComplete(int uid) throws DoesNotExistException {
-        return getDBInt("COMPLETE", tableName, uid);
+    public int getComplete(int uid) throws DoesNotExistException, AuthorizationException {
+        Permissions.get().checkPermission(tableName, "COMPLETE", Operation.VIEW);
+        return getDBInt("COMPLETE", uid);
     }
 
+    /**
+     * A method to get the Street of the user with UID specified.
+     *
+     * @param uid the UID of the user in question
+     * @return A string of the Street name
+     * @throws DoesNotExistException  if the user does not exist.
+     * @throws AuthorizationException if the accessing user does not have authorization to do so
+     */
     @Override
-    public String getStreet(int uid) throws DoesNotExistException {
-        return getDBString("STREET", tableName, uid);
+    public String getStreet(int uid) throws DoesNotExistException, AuthorizationException {
+        Permissions.get().checkPermission(tableName, "STREET", Operation.VIEW);
+        return getDBString("STREET", uid);
     }
 
+    /**
+     * A method to get the City of the user with UID specified.
+     *
+     * @param uid the UID of the user in question
+     * @return A string of the City name
+     * @throws DoesNotExistException  if the user does not exist.
+     * @throws AuthorizationException if the accessing user does not have authorization to do so
+     */
     @Override
-    public String getCity(int uid) throws DoesNotExistException {
-        return getDBString("CITY", tableName, uid);
+    public String getCity(int uid) throws DoesNotExistException, AuthorizationException {
+        Permissions.get().checkPermission(tableName, "CITY", Operation.VIEW);
+        return getDBString("CITY", uid);
     }
 
+    /**
+     * A method to get the State of the user with UID specified.
+     *
+     * @param uid the UID of the user in question
+     * @return A string of the State name
+     * @throws DoesNotExistException  if the user does not exist.
+     * @throws AuthorizationException if the accessing user does not have authorization to do so
+     */
     @Override
-    public String getState(int uid) throws DoesNotExistException {
-        return getDBString("STATE", tableName, uid);
+    public String getState(int uid) throws DoesNotExistException, AuthorizationException {
+        Permissions.get().checkPermission(tableName, "STATE", Operation.VIEW);
+        return getDBString("STATE", uid);
     }
 
+    /**
+     * A method to get the Zip Code of the user with UID specified.
+     *
+     * @param uid the UID of the user in question
+     * @return A string of the Zip Code
+     * @throws DoesNotExistException  if the user does not exist.
+     * @throws AuthorizationException if the accessing user does not have authorization to do so
+     */
     @Override
-    public String getZipcode(int uid) throws DoesNotExistException {
-        return getDBString("ZIPCODE", tableName, uid);
+    public String getZipcode(int uid) throws DoesNotExistException, AuthorizationException {
+        Permissions.get().checkPermission(tableName, "ZIPCODE", Operation.VIEW);
+        return getDBString("ZIPCODE", uid);
     }
 
+    /**
+     * A method to get the Country of the user with UID specified.
+     *
+     * @param uid the UID of the user in question
+     * @return A string of the Country name
+     * @throws DoesNotExistException  if the user does not exist.
+     * @throws AuthorizationException if the accessing user does not have authorization to do so
+     */
     @Override
-    public String getCountry(int uid) throws DoesNotExistException {
-        return getDBString("COUNTRY", tableName, uid);
+    public String getCountry(int uid) throws DoesNotExistException, AuthorizationException {
+        Permissions.get().checkPermission(tableName, "COUNTRY", Operation.VIEW);
+        return getDBString("COUNTRY", uid);
     }
 
+    /**
+     * A method to get the List of Organizers of the event
+     *
+     * @param uid
+     * @return An arraylist containing the list of Organizers of the event
+     * @throws DoesNotExistException  if the list of Organizers does not exist
+     * @throws AuthorizationException if the accessing user does not have authorization to do so
+     */
     @Override
-    public ArrayList<Integer> getOrganizerList(int uid) throws DoesNotExistException {
-        return getDBArrayList("ORGANIZER", tableName, uid);
+    public ArrayList<Integer> getOrganizerList(int uid) throws DoesNotExistException, AuthorizationException {
+        Permissions.get().checkPermission(tableName, "ORGANIZER", Operation.VIEW);
+        return getDBArrayList("ORGANIZER", uid);
     }
 
+    /**
+     * A method to get the list of SubEvents of the event
+     *
+     * @param uid
+     * @return An arraylist containing the list of SubEvents of the event
+     * @throws DoesNotExistException  if the list of SubEvents does not exist.
+     * @throws AuthorizationException if the accessing user does not have authorization to do so
+     */
     @Override
-    public ArrayList<Integer> getSubEventList(int uid) throws DoesNotExistException {
-        return getDBArrayList("SUBEVENT", tableName, uid);
+    public ArrayList<Integer> getSubEventList(int uid) throws DoesNotExistException, AuthorizationException {
+        Permissions.get().checkPermission(tableName, "SUBEVENT", Operation.VIEW);
+        return getDBArrayList("SUBEVENT", uid);
     }
 
+    /**
+     * A method to get the list of Participants
+     *
+     * @param uid
+     * @return An arraylist containing the list of Participants of the event
+     * @throws DoesNotExistException  if the list of Participants does not exist
+     * @throws AuthorizationException if the accessing user does not have authorization to do so
+     */
     @Override
-    public ArrayList<Integer> getParticipantList(int uid) throws DoesNotExistException {
-        return getDBArrayList("PARTICIPANT", tableName, uid);
+    public ArrayList<Integer> getParticipantList(int uid) throws DoesNotExistException, AuthorizationException {
+        Permissions.get().checkPermission(tableName, "PARTICIPANT", Operation.VIEW);
+        return getDBArrayList("PARTICIPANT", uid);
     }
 
+    /**
+     * A method to get the Committee of the event
+     *
+     * @param uid
+     * @return An arraylist containing the Committee of the event
+     * @throws DoesNotExistException  if the user does not exist.
+     * @throws AuthorizationException if the accessing user does not have authorization to do so
+     */
     @Override
-    public ArrayList<Integer> getCommittee(int uid) throws DoesNotExistException {
-        return getDBArrayList("COMMITTEE", tableName, uid);
+    public ArrayList<Integer> getCommittee(int uid) throws DoesNotExistException, AuthorizationException {
+        Permissions.get().checkPermission(tableName, "COMMITTEE", Operation.VIEW);
+        return getDBArrayList("COMMITTEE", uid);
     }
 
     ////////////////////////SETTERS///////////////////////////////
     @Override
-    public void setDescription(int uid, String description) throws DoesNotExistException {
-        setDBString("DESCRIPTION", tableName, uid, description);
+    public void setDescription(int uid, String description) throws DoesNotExistException, AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, "DESCRIPTION", Operation.MODIFY);
+        setDBString("DESCRIPTION", uid, description);
     }
 
     @Override
-    public void setDetails(int uid, String details) throws DoesNotExistException {
-        setDBString("DETAILS", tableName, uid, details);
+    public void setDetails(int uid, String details) throws DoesNotExistException, AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, "DETAILS", Operation.MODIFY);
+        setDBString("DETAILS", uid, details);
     }
 
     @Override
-    public void setTitle(int uid, String title) throws DoesNotExistException {
-        setDBString("TITLE", tableName, uid, title);
+    public void setTitle(int uid, String title) throws DoesNotExistException, AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, "TITLE", Operation.MODIFY);
+        setDBString("TITLE", uid, title);
     }
 
     @Override
-    public void setStartDate(int uid, Timestamp time) throws DoesNotExistException {
-        setDBTimestamp("STARTDATE", tableName, uid, time);
+    public void setStartDate(int uid, Timestamp time) throws DoesNotExistException, AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, "STARTDATE", Operation.MODIFY);
+        setDBTimestamp("STARTDATE", uid, time);
     }
 
     @Override
-    public void setEndDate(int uid, Timestamp time) throws DoesNotExistException {
-        setDBTimestamp("ENDDATE", tableName, uid, time);
+    public void setEndDate(int uid, Timestamp time) throws DoesNotExistException, AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, "ENDDATE", Operation.MODIFY);
+        setDBTimestamp("ENDDATE", uid, time);
     }
 
     @Override
-    public void setComplete(int uid, int complete) throws DoesNotExistException {
-        setDBInt("COMPLETE", tableName, uid, complete);
+    public void setComplete(int uid, int complete) throws DoesNotExistException, AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, "COMPLETE", Operation.MODIFY);
+        setDBInt("COMPLETE", uid, complete);
     }
 
     @Override
-    public void setStreet(int uid, String street) throws DoesNotExistException {
-        setDBString("STREET", tableName, uid, street);
+    public void setStreet(int uid, String street) throws DoesNotExistException, AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, "STREET", Operation.MODIFY);
+        setDBString("STREET", uid, street);
     }
 
     @Override
-    public void setCity(int uid, String city) throws DoesNotExistException {
-        setDBString("CITY", tableName, uid, city);
+    public void setCity(int uid, String city) throws DoesNotExistException, AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, "CITY", Operation.MODIFY);
+        setDBString("CITY", uid, city);
     }
 
     @Override
-    public void setState(int uid, String state) throws DoesNotExistException {
-        setDBString("STATE", tableName, uid, state);
+    public void setState(int uid, String state) throws DoesNotExistException, AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, "STATE", Operation.MODIFY);
+        setDBString("STATE", uid, state);
     }
 
     @Override
-    public void setZipcode(int uid, String zipcode) throws DoesNotExistException {
-        setDBString("ZIPCODE", tableName, uid, zipcode);
+    public void setZipcode(int uid, String zipcode) throws DoesNotExistException, AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, "ZIPCODE", Operation.MODIFY);
+        setDBString("ZIPCODE", uid, zipcode);
     }
 
     @Override
-    public void setCountry(int uid, String country) throws DoesNotExistException {
-        setDBString("COUNTRY", tableName, uid, country);
+    public void setCountry(int uid, String country) throws DoesNotExistException, AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, "COUNTRY", Operation.MODIFY);
+        setDBString("COUNTRY", uid, country);
     }
 
     @Override
-    public void setOrganizerList(int uid, ArrayList<Integer> organizerList) throws DoesNotExistException {
-        setDBArrayList("ORGANIZER", tableName, uid, organizerList);
+    public void setOrganizerList(int uid, ArrayList<Integer> organizerList) throws DoesNotExistException, AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, "ORGANIZER", Operation.MODIFY);
+        setDBArrayList("ORGANIZER", uid, organizerList);
     }
 
     @Override
-    public void setSubEventList(int uid, ArrayList<Integer> subEventList) throws DoesNotExistException {
-        setDBArrayList("SUBEVENT", tableName, uid, subEventList);
+    public void setSubEventList(int uid, ArrayList<Integer> subEventList) throws DoesNotExistException, AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, "SUBEVENT", Operation.MODIFY);
+        setDBArrayList("SUBEVENT", uid, subEventList);
     }
 
     @Override
-    public void setParticipantList(int uid, ArrayList<Integer> participantList) throws DoesNotExistException {
-        setDBArrayList("PARTICIPANT", tableName, uid, participantList);
+    public void setParticipantList(int uid, ArrayList<Integer> participantList) throws DoesNotExistException, AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, "PARTICIPANT", Operation.MODIFY);
+        setDBArrayList("PARTICIPANT", uid, participantList);
     }
 
     @Override
-    public void setCommittee(int uid, ArrayList<Integer> committeeList) throws DoesNotExistException {
-        setDBArrayList("COMMITTEE", tableName, uid, committeeList);
+    public void setCommittee(int uid, ArrayList<Integer> committeeList) throws DoesNotExistException, AuthorizationException, UpdateException {
+        Permissions.get().checkPermission(tableName, "COMMITTEE", Operation.MODIFY);
+        setDBArrayList("COMMITTEE", uid, committeeList);
     }
 }

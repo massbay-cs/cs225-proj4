@@ -2,69 +2,65 @@ package EMS_Database;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import auth.AuthorizationException;
+import exception.UpdateException;
 
 /**
  *
  * @author mike
  */
 public interface Interface_TaskData {
+    int createTask(InputTask task) throws AuthorizationException, UpdateException;
 
-    // SPECIAL CASE FUNCTIONS
-    public String queryEntireTable();
-
-    public int createTask(InputTask task);
-
-    public int nextValidUID();
-
-    public void removeTask(int uid) throws DoesNotExistException;
+    void removeTask(int uid) throws DoesNotExistException, AuthorizationException, UpdateException;
 
     // GETTERS
-    public String getDescription(int uid) throws DoesNotExistException;
+    String getDescription(int uid) throws DoesNotExistException, AuthorizationException;
 
-    public String getDetails(int uid) throws DoesNotExistException;
+    String getDetails(int uid) throws DoesNotExistException, AuthorizationException;
     
-    public String getTitle(int uid) throws DoesNotExistException;
+    String getTitle(int uid) throws DoesNotExistException, AuthorizationException;
 
-    public Timestamp getStartDate(int uid) throws DoesNotExistException;
+    Timestamp getStartDate(int uid) throws DoesNotExistException, AuthorizationException;
 
-    public Timestamp getEndDate(int uid) throws DoesNotExistException;
+    Timestamp getEndDate(int uid) throws DoesNotExistException, AuthorizationException;
 
-    public int getComplete(int uid) throws DoesNotExistException;
+    int getComplete(int uid) throws DoesNotExistException, AuthorizationException;
 
-    public ArrayList<Integer> getAuthority(int uid) throws DoesNotExistException;
+    ArrayList<Integer> getAuthority(int uid) throws DoesNotExistException, AuthorizationException;
 
-    public String getStreet(int uid) throws DoesNotExistException; //location info
+    String getStreet(int uid) throws DoesNotExistException, AuthorizationException; //location info
 
-    public String getCity(int uid) throws DoesNotExistException; //location info
+    String getCity(int uid) throws DoesNotExistException, AuthorizationException; //location info
 
-    public String getState(int uid) throws DoesNotExistException; //location info
+    String getState(int uid) throws DoesNotExistException, AuthorizationException; //location info
 
-    public String getZipcode(int uid) throws DoesNotExistException; //location info
+    String getZipcode(int uid) throws DoesNotExistException, AuthorizationException; //location info
 
-    public String getCountry(int uid) throws DoesNotExistException; //location info
+    String getCountry(int uid) throws DoesNotExistException, AuthorizationException; //location info
 
     // SETTERS      
-    public void setDescription(int uid, String description) throws DoesNotExistException;
+    void setDescription(int uid, String description) throws DoesNotExistException, AuthorizationException, UpdateException;
 
-    public void setDetails(int uid, String details) throws DoesNotExistException;
+    void setDetails(int uid, String details) throws DoesNotExistException, AuthorizationException, UpdateException;
     
-    public void setTitle(int uid, String title) throws DoesNotExistException;
+    void setTitle(int uid, String title) throws DoesNotExistException, AuthorizationException, UpdateException;
 
-    public void setStartDate(int uid, Timestamp time) throws DoesNotExistException;
+    void setStartDate(int uid, Timestamp time) throws DoesNotExistException, AuthorizationException, UpdateException;
 
-    public void setEndDate(int uid, Timestamp time) throws DoesNotExistException;
+    void setEndDate(int uid, Timestamp time) throws DoesNotExistException, AuthorizationException, UpdateException;
 
-    public void setComplete(int uid, int complete) throws DoesNotExistException;
+    void setComplete(int uid, int complete) throws DoesNotExistException, AuthorizationException, UpdateException;
 
-    public void setAuthority(int uid, ArrayList<Integer> committeeList) throws DoesNotExistException;
+    void setAuthority(int uid, ArrayList<Integer> committeeList) throws DoesNotExistException, AuthorizationException, UpdateException;
 
-    public void setStreet(int uid, String street) throws DoesNotExistException; //location info
+    void setStreet(int uid, String street) throws DoesNotExistException, AuthorizationException, UpdateException; //location info
 
-    public void setCity(int uid, String city) throws DoesNotExistException; //location info
+    void setCity(int uid, String city) throws DoesNotExistException, AuthorizationException, UpdateException; //location info
 
-    public void setState(int uid, String state) throws DoesNotExistException; //location info
+    void setState(int uid, String state) throws DoesNotExistException, AuthorizationException, UpdateException; //location info
 
-    public void setZipcode(int uid, String zipcode) throws DoesNotExistException; //location info
+    void setZipcode(int uid, String zipcode) throws DoesNotExistException, AuthorizationException, UpdateException; //location info
 
-    public void setCountry(int uid, String country) throws DoesNotExistException; //location info
+    void setCountry(int uid, String country) throws DoesNotExistException, AuthorizationException, UpdateException; //location info
 }

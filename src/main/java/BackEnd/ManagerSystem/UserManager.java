@@ -8,9 +8,15 @@ import BackEnd.UserSystem.Participant;
 import BackEnd.UserSystem.UserExceptions.PasswordMismatchError;
 import BackEnd.UserSystem.PhoneNumber;
 import BackEnd.UserSystem.User;
+import BackEnd.UserSystem.UserExceptions.ValidationException;
 import EMS_Database.DoesNotExistException;
 import EMS_Database.InputUser;
 import EMS_Database.impl.UserData_Table;
+import auth.AuthorizationException;
+import auth.Permissions;
+import auth.PrivilegeLevel;
+import exception.UpdateException;
+
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.util.ArrayList;
@@ -32,11 +38,11 @@ public class UserManager {
             throws DoesNotExistException {
 
         usersTable = new UserData_Table();
-        userList = new ArrayList<Participant>();
+        userList = new ArrayList<>();
         rebuildUserList();
     }
 
-    public void connectManagers(LoginManager logInManager) {
+    void connectManagers(LoginManager logInManager) {
         this.logInManager = logInManager;
     }
 
@@ -56,20 +62,30 @@ public class UserManager {
         return selectedUser;
     }
 
+    public User getUserByUID(int uid) throws AuthorizationException, DoesNotExistException {
+        return usersTable.getUser(uid);
+    }
+
     private void rebuildUserList()
             throws DoesNotExistException {
 
-        for (Integer userID : usersTable.currentUIDList("USERS")) {
-            if (usersTable.getParticipant(userID)) {
-                userList.add(rebuildParticipant(userID));
-            } else {
-                userList.add((Participant) rebuildUser(userID));
+        try (Permissions.SystemTransaction ignored = Permissions.get().beginSystemTransaction()) {
+            for (Integer userID : usersTable.getUIDsNeedingRebuild()) {
+                try {
+                    if (usersTable.getPrivilegeLevel(userID).isParticipant()) {
+                        userList.add(rebuildParticipant(userID));
+                    } else {
+                        userList.add(rebuildUser(userID));
+                    }
+                } catch (AuthorizationException e) {
+                    // Ignore
+                }
             }
         }
     }
 
     private Participant rebuildParticipant(int userID)
-            throws DoesNotExistException {
+            throws DoesNotExistException, AuthorizationException {
 
         Participant participant = new Participant(
                 userID, usersTable.getFirstName(userID), usersTable.getLastName(userID), usersTable.getEmail(userID));
@@ -81,14 +97,13 @@ public class UserManager {
     }
 
     private User rebuildUser(int userID)
-            throws DoesNotExistException {
+            throws DoesNotExistException, AuthorizationException {
 
         User user = new User(
                 userID, usersTable.getFirstName(userID), usersTable.getLastName(userID),
                 usersTable.getEmail(userID), usersTable.getPwd(userID));
 
-        user.setAdminPrivilege(usersTable.getLevel(userID) == 1 ? true : false);
-        user.setEventCreationPrivilege(usersTable.getEventCreationPrivilege(userID) == 1 ? true : false);
+        user.setPrivilegeLevel(usersTable.getPrivilegeLevel(userID));
         user.setPhoneNumber(new PhoneNumber(usersTable.getPhone(userID)));
         user.setAddress(new Address(usersTable.getStreet(userID), usersTable.getCity(userID),
                 usersTable.getState(userID), usersTable.getZipcode(userID), usersTable.getCountry(userID)));
@@ -97,7 +112,7 @@ public class UserManager {
     }
 
     public User createUser(User user)
-            throws DuplicateEmailException {
+            throws DuplicateEmailException, AuthorizationException, UpdateException {
 
         if (usersTable.checkEmail(user.getEmailAddress())) {
             throw new DuplicateEmailException("Email address already exists in the system");
@@ -109,13 +124,13 @@ public class UserManager {
     }
 
     public void deleteUser(User user)
-            throws DoesNotExistException {
+            throws DoesNotExistException, UpdateException, AuthorizationException {
         userList.remove(selectedUser);
         usersTable.removeUser(selectedUser.getUserId());
     }
 
     public void editFirstName(String firstName)
-            throws PrivilegeInsufficientException, DoesNotExistException {
+            throws PrivilegeInsufficientException, DoesNotExistException, UpdateException, AuthorizationException {
 
         User loggedInUser = logInManager.getLoggedInUser();
         if (PrivilegeManager.hasUserPrivilege(loggedInUser, selectedUser)) {
@@ -125,7 +140,7 @@ public class UserManager {
     }
 
     public void editLastName(String lastName)
-            throws PrivilegeInsufficientException, DoesNotExistException {
+            throws PrivilegeInsufficientException, DoesNotExistException, UpdateException, AuthorizationException {
 
         User loggedInUser = logInManager.getLoggedInUser();
         if (PrivilegeManager.hasUserPrivilege(loggedInUser, selectedUser)) {
@@ -135,7 +150,7 @@ public class UserManager {
     }
 
     public void editEmailAddress(String emailAddress)
-            throws PrivilegeInsufficientException, DoesNotExistException {
+            throws PrivilegeInsufficientException, DoesNotExistException, UpdateException, AuthorizationException, ValidationException {
 
         User loggedInUser = logInManager.getLoggedInUser();
         if (PrivilegeManager.hasUserPrivilege(loggedInUser, selectedUser)) {
@@ -145,7 +160,7 @@ public class UserManager {
     }
 
     public void editAddress(Address address)
-            throws PrivilegeInsufficientException, DoesNotExistException {
+            throws PrivilegeInsufficientException, DoesNotExistException, UpdateException, AuthorizationException {
 
         User loggedInUser = logInManager.getLoggedInUser();
         if (PrivilegeManager.hasUserPrivilege(loggedInUser, selectedUser)) {
@@ -155,7 +170,7 @@ public class UserManager {
     }
 
     public void editPhoneNumber(PhoneNumber phoneNumber)
-            throws PrivilegeInsufficientException, DoesNotExistException {
+            throws PrivilegeInsufficientException, DoesNotExistException, UpdateException, AuthorizationException {
 
         User loggedInUser = logInManager.getLoggedInUser();
         if (PrivilegeManager.hasUserPrivilege(loggedInUser, selectedUser)) {
@@ -168,7 +183,7 @@ public class UserManager {
             throws IllegalCharacterException, PasswordMismatchError,
             PrivilegeInsufficientException, DoesNotExistException,
             InvalidKeyException, UnsupportedEncodingException,
-            IllegalBlockSizeException, BadPaddingException {
+            IllegalBlockSizeException, BadPaddingException, UpdateException, AuthorizationException {
 
         User loggedInUser = logInManager.getLoggedInUser();
         if (PrivilegeManager.hasUserPrivilege(loggedInUser, selectedUser)) {
@@ -177,23 +192,12 @@ public class UserManager {
         }
     }
 
-    public void editAdminPrivilege(boolean adminPrivilege)
-            throws PrivilegeInsufficientException, DoesNotExistException {
-
+    public void editPrivilegeLevel(PrivilegeLevel privilegeLevel)
+            throws PrivilegeInsufficientException, DoesNotExistException, UpdateException, AuthorizationException{
         User loggedInUser = logInManager.getLoggedInUser();
         if (PrivilegeManager.hasAdminPrivilege(loggedInUser)) {
-            selectedUser.setAdminPrivilege(adminPrivilege);
-            usersTable.setLevel(selectedUser.getUserId(), adminPrivilege == true ? 1 : 0);
-        }
-    }
-
-    public void editEventCreationPrivilege(boolean eventCreationPrivilege)
-            throws PrivilegeInsufficientException, DoesNotExistException {
-
-        User loggedInUser = logInManager.getLoggedInUser();
-        if (PrivilegeManager.hasAdminPrivilege(loggedInUser)) {
-            selectedUser.setEventCreationPrivilege(eventCreationPrivilege);
-            usersTable.setLevel(selectedUser.getUserId(), eventCreationPrivilege == true ? 1 : 0);
+            selectedUser.setPrivilegeLevel(privilegeLevel);
+            usersTable.setPrivilegeLevel(selectedUser.getUserId(), privilegeLevel);
         }
     }
 }

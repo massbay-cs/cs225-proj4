@@ -1,13 +1,12 @@
 package BackEnd.UserSystem;
 
 
-import BackEnd.UserSystem.UserExceptions.PasswordMismatchError;
 import BackEnd.UserSystem.UserExceptions.IllegalCharacterException;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidKeyException;
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
+import BackEnd.UserSystem.UserExceptions.PasswordMismatchError;
+import EMS_Database.DoesNotExistException;
+import auth.AuthorizationException;
+import auth.Operation;
+import auth.Permissions;
 
 /*
  * To change this template, choose Tools | Templates
@@ -21,14 +20,12 @@ public class User extends Participant {
     // private int UID;
 
     private String password;
-    private boolean adminPrivilege;
-    private boolean eventCreationPrivilege;
     final private char[] ILLEGAL_CHARACTERS = {'@', '/', '\\', ' '};
     
 
     public User() {
         super();
-        password = new String();
+        password = "";
     }
 
     /**
@@ -40,9 +37,12 @@ public class User extends Participant {
     public User(String firstName, String lastName, String emailAddress, String pword, String pwordMatch)
             throws PasswordMismatchError, IllegalCharacterException {
         super(firstName, lastName, emailAddress);
-        setPassword(pword, pwordMatch);
-        
 
+        try (Permissions.SystemTransaction ignored = Permissions.get().beginSystemTransaction()) {
+            setPassword(pword, pwordMatch);
+        } catch (AuthorizationException ignored) {
+            // This exception can't logically occur.
+        }
     }
 
     /*
@@ -53,12 +53,10 @@ public class User extends Participant {
             
      }*/
     public User(int userID, User user) {
-        super(userID, (Participant) user);
+        super(userID, user);
 
-        password = user.getPassword();
-
-        adminPrivilege = user.getAdminPrivilege();
-        eventCreationPrivilege = user.getEventCreationPrivilege();
+        password = user.password;
+        privilegeLevel = user.privilegeLevel;
     }
 
     public User(int uid, String firstName, String lastName, String emailAddress, String pword) {
@@ -76,7 +74,9 @@ public class User extends Participant {
      * match.
      */
     public void setPassword(String pword, String pwordMatch) throws
-            IllegalCharacterException, PasswordMismatchError{
+            IllegalCharacterException, PasswordMismatchError, AuthorizationException {
+        Permissions.get().checkPermission("USERS", "PWD", Operation.MODIFY, getUserId(), getPrivilegeLevel());
+
         if (checkCharacters(pword)) {
             if (verifyPassword(pword, pwordMatch)) {
                 password = pword;
@@ -89,11 +89,7 @@ public class User extends Participant {
     }
 
     private boolean verifyPassword(String pword, String pwordMatch) {
-        if (pword.equals(pwordMatch)) {
-            return true;
-        } else {
-            return false;
-        }
+        return pword.equals(pwordMatch);
     }
 
     /**
@@ -104,7 +100,8 @@ public class User extends Participant {
      *
      * @return password
      */
-    public String getPassword() {
+    public String getPassword() throws AuthorizationException {
+        Permissions.get().checkPermission("USERS", "PWD", Operation.VIEW, getUserId(), getPrivilegeLevel());
         return password;
     }
 
@@ -116,7 +113,7 @@ public class User extends Participant {
      * @return Returns false if the string contains illegal characters,
      * otherwise returns true
      */
-    public boolean checkCharacters(String s) {
+    private boolean checkCharacters(String s) {
         boolean b = true;
         for (char ic : ILLEGAL_CHARACTERS) {
             for (int x = 0; x < s.length(); x++) {
@@ -128,57 +125,17 @@ public class User extends Participant {
         return b;
     }
 
-    /**
-     *
-     * @param b boolean value determining if the user has admin privileges
-     */
-    public void setAdminPrivilege(boolean b) {
-        adminPrivilege = b;
-    }
-
-    /**
-     *
-     * @return the user's admin privileges.
-     */
-    public boolean getAdminPrivilege() {
-        return adminPrivilege;
-    }
-
-    /**
-     *
-     * @param b boolean value determining if the user has event creation
-     * privileges
-     */
-    public void setEventCreationPrivilege(boolean b) {
-        eventCreationPrivilege = b;
-    }
-
-    /**
-     *
-     * @return the user's event creation privileges
-     */
-    public boolean getEventCreationPrivilege() {
-        return eventCreationPrivilege;
-    }
-
     public boolean equals(User user) {
-        if (user == null) {
-            return false;
-        }
-        String s = this.getEmailAddress();
-        if (s.equals(user.getEmailAddress())) {
-            return true;
-        } else {
-            return false;
-        }
+        return user != null && emailAddress != null && emailAddress.equals(user.emailAddress);
+
     }
 
+    @Override
     public String toString() {
-//        String output = "\n" + super.toString() +
-//                "\nPassword: " + password +
-//                "\nAdmin Privileges: " + adminPrivilege +
-//                "\nEvent Creation Privileges: " + eventCreationPrivilege;
-//        return output;
-        return super.getFirstName() + " " + super.getLastName();
+        try {
+            return getFirstName() + " " + getLastName();
+        } catch (AuthorizationException e) {
+            return "Unknown User #" + getUserId();
+        }
     }
 }
