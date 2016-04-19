@@ -25,6 +25,7 @@ import javax.swing.event.ListSelectionListener;
 /**
  *
  * @author Karina
+ * Fred made the password button work
  */
 public class UserManagementPanel extends javax.swing.JPanel {
     private MainManager manager;
@@ -479,9 +480,37 @@ public class UserManagementPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void passwordButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passwordButtonActionPerformed
-        JOptionPane.showInputDialog("Please enter your new password:");
-    }//GEN-LAST:event_passwordButtonActionPerformed
+    private void passwordButtonActionPerformed(java.awt.event.ActionEvent evt) {                                               
+        if(JOptionPane.showInputDialog("Please enter your current password:").equals(selectedUser.getPassword()))
+        {
+            String newPass =JOptionPane.showInputDialog("Please enter your new password:");
+            try {
+            manager.getUserManager().editPassword(newPass, newPass);
+            }
+            catch (PrivilegeInsufficientException ex) 
+            {
+                Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IllegalCharacterException ex) {
+                Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (PasswordMismatchError ex) {
+                Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (DoesNotExistException ex) {
+                Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InvalidKeyException ex) {
+                Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (UnsupportedEncodingException ex) {
+                Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IllegalBlockSizeException ex) {
+                Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (BadPaddingException ex) {
+                Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(null, "Incorrect Password");
+        }
+    }
 
     private void changeInfoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeInfoButtonActionPerformed
         CardLayout cl = (CardLayout)(UserInfoPanelHolder.getLayout());
