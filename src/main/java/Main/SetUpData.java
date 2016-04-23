@@ -23,6 +23,10 @@ import BackEnd.UserSystem.PhoneNumber;
 import BackEnd.UserSystem.User;
 import EMS_Database.DoesNotExistException;
 import EMS_Database.DuplicateInsertionException;
+import auth.AuthorizationException;
+import auth.PrivilegeLevel;
+import exception.UpdateException;
+
 import java.util.ArrayList;
 
 /**
@@ -31,7 +35,7 @@ import java.util.ArrayList;
  */
 public class SetUpData {
 
-    public static void main(String[] args) throws PasswordMismatchError, IllegalCharacterException {
+    public static void main(String[] args){
         ClearData clearData = new ClearData();
         clearData.main(args);
 
@@ -43,18 +47,28 @@ public class SetUpData {
         e.setDescription("I'm an event.");
         //e.setLocation(new Location());
         //Create admin user
-        User u = new User("Alpha", "Bravo", "AB@AB.com", "ab", "ab");
+        User u = null;
+        try{
+            u = new User("Alpha", "Bravo", "AB@AB.com", "ab", "ab");
+        }catch (IllegalCharacterException ex){
+        }catch (PasswordMismatchError ex){}
         Address addr = new Address("Street", "City", "STATE", "00000", "COUNTRY");
         PhoneNumber num = new PhoneNumber("5555555555");
-        u.setAddress(addr);
-        u.setPhoneNumber(num);
-        u.setAdminPrivilege(true);
-        u.setEventCreationPrivilege(true);
+        try {
+            u.setAddress(addr);
+            u.setPhoneNumber(num);
+            u.setPrivilegeLevel(PrivilegeLevel.ADMIN);
+        }catch (AuthorizationException ex){}
+
         try {
             u = manager.getUserManager().createUser(u);
             System.out.println("Admin Created: " + u);
         } catch (DuplicateEmailException error) {
             System.out.println("Can't create admin : Duplicate Email");
+        }catch (UpdateException error ){
+            System.out.println("Error: Cannot update");
+        }catch (AuthorizationException error ){
+            System.out.println("Can't create admin: Privilege lacking");
         }
 
         //Try to create Event
@@ -73,23 +87,33 @@ public class SetUpData {
             System.out.println("Can't create event : Incorrect log in.");
         } catch (DuplicateInsertionException error){
             System.out.println("Can't create event : Duplicate insertion.");
+        }catch( AuthorizationException error){
+            System.out.println("Can't create event : Lacking Authorization.");
+        }catch (UpdateException error){
+            System.out.println("Can't create event : Could not update");
         }
         
 
         //Create users
         ArrayList<User> uList = new ArrayList<User>();
-        User u2 = new User("Bravo", "Charlie", "BC@BC.com", "bc", "bc");
-        uList.add(u2);
-        User u3 = new User("Charlie", "Delta", "CD@CD.com", "cd", "cd");
-        uList.add(u3);
-        User u4 = new User("Delta", "Echo", "DE@DE.com", "de", "de");
-        uList.add(u4);
-        uList.add(new User("Echo", "Foxtrot", "EF@EF.com", "ef", "ef"));
-        uList.add(new User("Foxtrot", "Golf", "FG@FG.com", "fg", "fg"));
-        uList.add(new User("Golf", "Hotel", "GH@GH.com", "gh", "gh"));
-        uList.add(new User("Hotel", "India", "HI@HI.com", "hi", "hi"));
-        uList.add(new User("India", "Juliett", "IJ@IJ.com", "ij", "ij"));
-        uList.add(new User("Juliett", "Kilo", "JK@JK.com", "jk", "jk"));
+        try {
+            User u2 = new User("Bravo", "Charlie", "BC@BC.com", "bc", "bc");
+            uList.add(u2);
+            User u3 = new User("Charlie", "Delta", "CD@CD.com", "cd", "cd");
+            uList.add(u3);
+            User u4 = new User("Delta", "Echo", "DE@DE.com", "de", "de");
+            uList.add(u4);
+            uList.add(new User("Echo", "Foxtrot", "EF@EF.com", "ef", "ef"));
+            uList.add(new User("Foxtrot", "Golf", "FG@FG.com", "fg", "fg"));
+            uList.add(new User("Golf", "Hotel", "GH@GH.com", "gh", "gh"));
+            uList.add(new User("Hotel", "India", "HI@HI.com", "hi", "hi"));
+            uList.add(new User("India", "Juliett", "IJ@IJ.com", "ij", "ij"));
+            uList.add(new User("Juliett", "Kilo", "JK@JK.com", "jk", "jk"));
+        }catch (PasswordMismatchError error){
+            System.out.println("Cannot add: password does not match");
+        }catch (IllegalCharacterException error ){
+            System.out.println("Cannot add: Illegal character entered");
+        }
 
         //add users
         User temporaryUser;

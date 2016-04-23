@@ -499,7 +499,12 @@ public class UserManagementPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void passwordButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passwordButtonActionPerformed
-        if(JOptionPane.showInputDialog("Please enter your current password:").equals(selectedUser.getPassword()))
+
+        boolean opt = false;
+        try {
+            opt = JOptionPane.showInputDialog("Please enter your current password:").equals(selectedUser.getPassword());
+        }catch (AuthorizationException ex){}
+        if(opt)
         {
             String newPass =JOptionPane.showInputDialog("Please enter your new password:");
             try {
@@ -520,6 +525,10 @@ public class UserManagementPanel extends javax.swing.JPanel {
             } catch (IllegalBlockSizeException ex) {
                 Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
             } catch (BadPaddingException ex) {
+                Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }catch (AuthorizationException ex){
+                Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }catch (UpdateException ex){
                 Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -562,7 +571,7 @@ public class UserManagementPanel extends javax.swing.JPanel {
                     if (eventBox.isSelected()) {
                         manager.getUserManager().editPrivilegeLevel(PrivilegeLevel.COMMITTEE_LEADER);
                     } else {
-                        manager.getUserManager().editEventCreationPrivilege(false);
+                        manager.getUserManager().editPrivilegeLevel(PrivilegeLevel.COMMITTEE_MEMBER);
                     }
                 }
             } catch (PrivilegeInsufficientException ex) 
@@ -706,12 +715,9 @@ private void countryFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:e
     class UserListSelectionListener implements ListSelectionListener {
     public void valueChanged(ListSelectionEvent e){
         manager.getUserManager().setSelectedUser((User)userList.getSelectedValue());
-        try{
             updateLabels();
-        }catch (AuthorizationException ignore ){
             JOptionPane pane  = new JOptionPane();
             pane.showMessageDialog(null, "You lack Proper authorization!");
         }
-    }
     }
 }

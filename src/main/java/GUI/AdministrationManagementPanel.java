@@ -7,6 +7,8 @@ import javax.swing.table.DefaultTableModel;
 import BackEnd.ManagerSystem.MainManager;
 import BackEnd.UserSystem.Participant;
 import EMS_Database.DoesNotExistException;
+import auth.AuthorizationException;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -68,12 +70,14 @@ public class AdministrationManagementPanel extends javax.swing.JPanel implements
      * set up the table for all users that are not already admins
      * @throws DoesNotExistException
      */
-    public void setTable() throws DoesNotExistException {
+    public void setTable() {
         ut = new AdminPanelTable();
         for (int j = 0; j < userList.size(); j++)
         {
             if(user.getUsersTable().getLevel(userList.get(j).getUserId()) == 0)
-                ut.addRow(new Object[]{userList.get(j).getFirstName(), userList.get(j).getLastName(), false});
+                try{
+                    ut.addRow(new Object[]{userList.get(j).getFirstName(), userList.get(j).getLastName(), false});
+                }catch (AuthorizationException authEx){}
 
         }
         userTable = new JTable(ut);
