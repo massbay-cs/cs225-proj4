@@ -5,6 +5,9 @@
 package GUI;
 
 import GUI.Reportable.BudgetReport;
+import auth.AuthorizationException;
+
+import javax.swing.*;
 
 /**
  *
@@ -20,9 +23,14 @@ public class CommitteeBudgetPanel extends javax.swing.JPanel {
     
     public CommitteeBudgetPanel() {
         initComponents();
-        
-        income = new CommitteeBudgetIncome();
-        expense = new CommitteeBudgetExpense();
+       try {
+           income = new CommitteeBudgetIncome();
+           expense = new CommitteeBudgetExpense();
+       }
+       catch (AuthorizationException e) {
+           JOptionPane.showMessageDialog(new JFrame("Error"),e.getMessage());
+           return;
+       }
         
         incomePanel.add(income);
         expensePanel.add(expense);

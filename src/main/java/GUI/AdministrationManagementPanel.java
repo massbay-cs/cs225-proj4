@@ -36,11 +36,7 @@ public class AdministrationManagementPanel extends javax.swing.JPanel implements
         manage = new MainManager().getInstance();
         user = manage.getUserManager();
         userList = user.getUserList();
-        try {
-            setTable();
-        } catch (DoesNotExistException e) {
-            e.printStackTrace();
-        }
+        setTable();
 
         scrollBar = new JScrollPane(userTable);
         scrollBar.setVisible(true);

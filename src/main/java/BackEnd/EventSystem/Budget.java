@@ -52,9 +52,7 @@ public class Budget implements Reportable {
     public double getTotalIncome() {
         double total = 0;
         for (int i = 0; i < incomeList.size(); i++) {
-            try{
-                total += incomeList.get(i).getValue();
-            }catch (AuthorizationException authEx){}
+            total += incomeList.get(i).getValue();
         }
         return total;
     }
@@ -63,9 +61,7 @@ public class Budget implements Reportable {
 
         double total = 0;
         for (int i = 0; i < expenseList.size(); i++) {
-            try{
-                total += expenseList.get(i).getValue();
-            }catch(AuthorizationException authEx){}
+            total += expenseList.get(i).getValue();
         }
         return total;
     }
@@ -102,20 +98,15 @@ public class Budget implements Reportable {
         ArrayList<String> expense = new ArrayList<String>();
 
         for (int i = 0; i < incomeList.size(); i++) {
-            try {
-                income.add("" + incomeList.get(i).getValue());
-                income.add("" + incomeList.get(i).getDescription());
-                income.add("" + incomeList.get(i).getDate().getTime());
-            } catch (AuthorizationException authEx) {
-            }
+            income.add("" + incomeList.get(i).getValue());
+            income.add("" + incomeList.get(i).getDescription());
+            income.add("" + incomeList.get(i).getDate().getTime());
+
         }
         for (int i = 0; i < expenseList.size(); i++) {
-            try {
-                expense.add("" + expenseList.get(i).getValue());
-                expense.add("" + expenseList.get(i).getDescription());
-                expense.add("" + expenseList.get(i).getDate().getTime());
-            } catch (AuthorizationException authEx) {
-            }
+            expense.add("" + expenseList.get(i).getValue());
+            expense.add("" + expenseList.get(i).getDescription());
+            expense.add("" + expenseList.get(i).getDate().getTime());
         }
 
         report.add(income);
