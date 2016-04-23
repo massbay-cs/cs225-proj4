@@ -63,6 +63,7 @@ public class AdministrationManagementPanel extends javax.swing.JPanel implements
                 try {
                     user.getUsersTable().setPrivilegeLevel((int )ut.getValueAt(i,2), PrivilegeLevel.ADMIN);
                     System.out.println("is now an admin");
+                    setTable();
                 } catch (DoesNotExistException e1) {
                     e1.printStackTrace();
                 } catch (AuthorizationException e1) {

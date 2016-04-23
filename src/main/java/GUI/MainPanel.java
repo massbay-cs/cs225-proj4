@@ -13,6 +13,7 @@ import BackEnd.UserSystem.User;
 import EMS_Database.DoesNotExistException;
 import EMS_Database.DuplicateInsertionException;
 import auth.AuthorizationException;
+import auth.PrivilegeLevel;
 import exception.UpdateException;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -71,6 +72,8 @@ public class MainPanel extends javax.swing.JPanel {
         }
 
         setAdminsButton = new JButton("Admin Management");
+        if(loggedInUser.getPrivilegeLevel() != PrivilegeLevel.ADMIN)
+            setAdminsButton.setVisible(false);
 
         Dimension dimension = new Dimension(150, 25);
         registerForEventButton.setPreferredSize(dimension);
@@ -95,7 +98,11 @@ public class MainPanel extends javax.swing.JPanel {
         */
 
         cp = new CalendarPanel();
-        amp = new AdministrationManagementPanel();
+        try {
+            amp = new AdministrationManagementPanel();
+        } catch (DoesNotExistException e) {
+            e.printStackTrace();
+        }
         EventDetailsPanel edp = new EventDetailsPanel();
         calendarSwitchingPanel.add(cp, "calendar");
         calendarSwitchingPanel.add(edp, "eventDetails");
@@ -168,10 +175,10 @@ public class MainPanel extends javax.swing.JPanel {
     /**
      * switches the visible panel to the administration management panel
      */
-    private void AdminManagementButtonPerformed(java.awt.event.ActionEvent evt)
-    {
+    private void AdminManagementButtonPerformed(java.awt.event.ActionEvent evt) throws AuthorizationException {
         CardLayout cl = (CardLayout)  (calendarSwitchingPanel.getLayout());
-        cl.show(calendarSwitchingPanel, "adminManagement");
+       if( loggedInUser.getPrivilegeLevel() == PrivilegeLevel.ADMIN)
+            cl.show(calendarSwitchingPanel, "adminManagement");
     }
 
     /**
@@ -187,7 +194,11 @@ public class MainPanel extends javax.swing.JPanel {
                 selectEventDetailsButtonActionPerformed(e);
             }
             if (e.getSource() == setAdminsButton)
-                AdminManagementButtonPerformed(e);
+                try {
+                    AdminManagementButtonPerformed(e);
+                } catch (AuthorizationException e1) {
+                    e1.printStackTrace();
+                }
         }
     }
 
