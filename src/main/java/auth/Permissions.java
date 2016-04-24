@@ -93,7 +93,6 @@ public class Permissions {
      * @param field     name of the affected field, exactly as it appears in the database; <code>null</code> for CREATE and
      *                  DELETE operations
      * @param operation if dealing with a single field, VIEW or MODIFY; if dealing with a whole row, CREATE or DELETE
-     * @throws AuthorizationException if the current user lacks permission
      */
     public void checkPermission(String table, String field, Operation operation){
         if (isInSystemTransaction()) {
@@ -130,7 +129,10 @@ public class Permissions {
                 SystemTransaction ignored = beginSystemTransaction();
                 otherLevel = MainManager.getInstance().getUserManager().getUsersTable().getPrivilegeLevel(userID);
             }catch (AuthorizationException authEx ){
-            }catch (DoesNotExistException dneEx ){}
+                System.out.println("Error: Lacking authority");
+            }catch (DoesNotExistException dneEx ){
+                System.out.println("Error: Cannot update");
+            }
         }
 
             checkPermission(table, field, operation, who, otherLevel);
@@ -177,9 +179,7 @@ public class Permissions {
         Level level = getLevel();
         assert level.getPrivilegeLevel() == getCurrentPrivilegeLevel();
 
-        try{
-            level.checkPermission(table, field, operation, who, otherLevel);
-        }catch (AuthorizationException authEx){}
+        level.checkPermission(table, field, operation, who, otherLevel);
     }
 
 

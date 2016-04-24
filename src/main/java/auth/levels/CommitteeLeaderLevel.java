@@ -356,7 +356,7 @@ public class CommitteeLeaderLevel extends Level {
         }
     }
     @Override
-    public void checkPermission(String table, String field, Operation operation, Who who, PrivilegeLevel otherLevel) throws AuthorizationException {
+    public void checkPermission(String table, String field, Operation operation, Who who, PrivilegeLevel otherLevel){
         super.checkPermission(table, field, operation, who, otherLevel);
     }
 }

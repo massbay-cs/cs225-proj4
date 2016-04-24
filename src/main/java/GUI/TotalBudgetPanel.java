@@ -5,6 +5,7 @@
 package GUI;
 
 import GUI.Reportable.BudgetReport;
+import auth.AuthorizationException;
 
 /**
  *
@@ -21,7 +22,12 @@ public class TotalBudgetPanel extends javax.swing.JPanel {
     public TotalBudgetPanel() {
         initComponents();
         
-        budgetIncome = new TotalBudgetIncome();
+        try{
+            budgetIncome = new TotalBudgetIncome();
+        }catch (AuthorizationException ex){
+            System.out.println("Error: Lacking authority");
+        }
+
         budgetExpense = new TotalBudgetExpense();
         
         incomePanel.add(budgetIncome);
@@ -32,7 +38,13 @@ public class TotalBudgetPanel extends javax.swing.JPanel {
     }
     
     public void updateInfo(){
-        budgetIncome.updateInfo();
+
+        try{
+            budgetIncome.updateInfo();
+        }catch (AuthorizationException ex){
+            System.out.println("Error: Lacking authority");
+        }
+
         budgetExpense.updateInfo();
     }
     

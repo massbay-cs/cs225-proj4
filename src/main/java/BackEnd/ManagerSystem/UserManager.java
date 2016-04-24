@@ -80,64 +80,104 @@ public class UserManager {
                         userList.add(rebuildUser(userID));
                     }
                 } catch (AuthorizationException e) {
-                    // Ignore
+                    System.out.println("Error: Lacking authority");
                 }
             }
         }
     }
 
-    private Participant rebuildParticipant(int userID)
-            throws DoesNotExistException, AuthorizationException {
+    private Participant rebuildParticipant(int userID){
 
-        Participant participant = new Participant(
-                userID, usersTable.getFirstName(userID), usersTable.getLastName(userID), usersTable.getEmail(userID));
-        participant.setPhoneNumber(new PhoneNumber(usersTable.getPhone(userID)));
-        participant.setAddress(new Address(usersTable.getStreet(userID), usersTable.getCity(userID),
-                usersTable.getState(userID), usersTable.getZipcode(userID), usersTable.getCountry(userID)));
-
+        Participant participant;
+        try {
+            participant = new Participant(
+                    userID, usersTable.getFirstName(userID), usersTable.getLastName(userID), usersTable.getEmail(userID));
+            participant.setPhoneNumber(new PhoneNumber(usersTable.getPhone(userID)));
+            participant.setAddress(new Address(usersTable.getStreet(userID), usersTable.getCity(userID),
+                    usersTable.getState(userID), usersTable.getZipcode(userID), usersTable.getCountry(userID)));
+        }catch (AuthorizationException ex){
+            System.out.println("Error: Lacking authority");
+            participant = null;
+        }catch (DoesNotExistException ex){
+            System.out.println("Error: Information Does not Exist");
+            participant = null;
+        }
         return participant;
     }
 
-    private User rebuildUser(int userID)
-            throws DoesNotExistException, AuthorizationException {
+    private User rebuildUser(int userID) {
 
-        User user = new User(
-                userID, usersTable.getFirstName(userID), usersTable.getLastName(userID),
-                usersTable.getEmail(userID), usersTable.getPwd(userID));
+        User user;
+        try {
+            user = new User(
+                    userID, usersTable.getFirstName(userID), usersTable.getLastName(userID),
+                    usersTable.getEmail(userID), usersTable.getPwd(userID));
 
-        user.setPrivilegeLevel(usersTable.getPrivilegeLevel(userID));
-        user.setPhoneNumber(new PhoneNumber(usersTable.getPhone(userID)));
-        user.setAddress(new Address(usersTable.getStreet(userID), usersTable.getCity(userID),
-                usersTable.getState(userID), usersTable.getZipcode(userID), usersTable.getCountry(userID)));
-
+            user.setPrivilegeLevel(usersTable.getPrivilegeLevel(userID));
+            user.setPhoneNumber(new PhoneNumber(usersTable.getPhone(userID)));
+            user.setAddress(new Address(usersTable.getStreet(userID), usersTable.getCity(userID),
+                    usersTable.getState(userID), usersTable.getZipcode(userID), usersTable.getCountry(userID)));
+        }catch (AuthorizationException ex){
+            System.out.println("Error: Lacking authority");
+            user = null;
+        }catch (DoesNotExistException ex){
+            System.out.println("Error: Information Does not Exist");
+            user = null;
+        }
         return user;
     }
 
-    public User createUser(User user)
-            throws DuplicateEmailException, AuthorizationException, UpdateException {
+    public User createUser(User user){
 
-        if (usersTable.checkEmail(user.getEmailAddress())) {
-            throw new DuplicateEmailException("Email address already exists in the system");
-        } else {
-            User newUser = new User(usersTable.createUser(new InputUser(user)), user);
-            userList.add(newUser);
-            return newUser;
+        try {
+            if (usersTable.checkEmail(user.getEmailAddress())) {
+                throw new DuplicateEmailException("Email address already exists in the system");
+            } else {
+                User newUser = new User(usersTable.createUser(new InputUser(user)), user);
+                userList.add(newUser);
+                return newUser;
+            }
+        }catch (AuthorizationException ex){
+            System.out.println("Error: Lacking authority");
+            return null;
+        }catch (UpdateException ex){
+            System.out.println("Error: Cannot update");
+            return null;
+        }catch (DuplicateEmailException ex){
+            System.out.println("Error: Email already exists");
+            return null;
         }
     }
 
-    public void deleteUser(User user)
-            throws DoesNotExistException, UpdateException, AuthorizationException {
+    public void deleteUser(User user) {
         userList.remove(selectedUser);
-        usersTable.removeUser(selectedUser.getUserId());
+        try{
+            usersTable.removeUser(selectedUser.getUserId());
+        }catch (AuthorizationException ex) {
+            System.out.println("Error: Lacking authority");
+        }catch (DoesNotExistException ex){
+            System.out.println("Error: User does not exist");
+        }catch (UpdateException ex){
+            System.out.println("Error: Cannot update");
+        }
     }
 
-    public void editFirstName(String firstName)
-            throws PrivilegeInsufficientException, DoesNotExistException, UpdateException, AuthorizationException {
+    public void editFirstName(String firstName) {
 
         User loggedInUser = logInManager.getLoggedInUser();
-        if (PrivilegeManager.hasUserPrivilege(loggedInUser, selectedUser)) {
-            selectedUser.setFirstName(firstName);
-            usersTable.setFirstName(selectedUser.getUserId(), firstName);
+        try {
+            if (PrivilegeManager.hasUserPrivilege(loggedInUser, selectedUser)) {
+                selectedUser.setFirstName(firstName);
+                usersTable.setFirstName(selectedUser.getUserId(), firstName);
+            }
+        }catch (AuthorizationException ex) {
+            System.out.println("Error: Lacking authority");
+        }catch (DoesNotExistException ex){
+            System.out.println("Error: User does not exist");
+        }catch (UpdateException ex) {
+            System.out.println("Error: Cannot update");
+        }catch (PrivilegeInsufficientException ex){
+            System.out.println("Error: Lacking proper privileges");
         }
     }
 

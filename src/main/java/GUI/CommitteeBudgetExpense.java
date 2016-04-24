@@ -123,7 +123,9 @@ public class CommitteeBudgetExpense extends javax.swing.JPanel {
 
                 try{
                     addExpenseButtonActionPerformed(evt);
-                }catch (AuthorizationException ignore ){}
+                }catch (AuthorizationException ignore ){
+                    System.out.println("Error: Higher Authority required");
+                }
             }
         });
 
@@ -190,9 +192,16 @@ public class CommitteeBudgetExpense extends javax.swing.JPanel {
             {
                 JOptionPane.showMessageDialog(this, "Cannot add this entry.");
                 System.out.println("Expense update error in Committee Expense: " + error.getMessage());
-            }catch (PrivilegeInsufficientException ex){
-            }catch (DoesNotExistException dataEx){
-            }catch (DuplicateInsertionException dupEx){}
+            }catch (PrivilegeInsufficientException pEx){
+                JOptionPane.showMessageDialog(this, "Insufficient Privelege level");
+                System.out.println("Error: Privilege level not high enough");
+            }catch (DoesNotExistException DNEex){
+                JOptionPane.showMessageDialog(this, "Cannot locate item");
+                System.out.println("Error: Information does not exist");
+            }catch (DuplicateInsertionException dupEx){
+                JOptionPane.showMessageDialog(this, "Item already exists");
+                System.out.println("Error: Duplicate information entered");
+            }
         }
         updateInfo();
     }//GEN-LAST:event_addExpenseButtonActionPerformed
@@ -215,8 +224,15 @@ public class CommitteeBudgetExpense extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(this, "Unable to delete.");
                 System.out.println("Deletion error in Committee Expense: " + error.getMessage());
             }catch (AuthorizationException ex){
+                JOptionPane.showMessageDialog(this, "Higher Authority required");
+                System.out.println("Error: Lacking authority");
             }catch (PrivilegeInsufficientException pEx){
-            }catch (DoesNotExistException DNEex){}
+                JOptionPane.showMessageDialog(this, "Insufficient Privelege level");
+                System.out.println("Error: Privilege level not high enough");
+            }catch (DoesNotExistException DNEex){
+                JOptionPane.showMessageDialog(this, "Cannot locate item");
+                System.out.println("Error: Information does not exist");
+            }
 
             updateInfo();
         }

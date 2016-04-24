@@ -98,10 +98,15 @@ public class BudgetItemManager {
                     expenseTable.setValue(selectedBudgetItem.getBUDGET_ITEM_ID(), value);
                 }
             }
-        }catch ( AuthorizationException authEx){
-        }catch ( PrivilegeInsufficientException privEx){
+        }catch (AuthorizationException authEx){
+            System.out.println("Error: Lacking authority");
+        }catch (PrivilegeInsufficientException privEx){
+            System.out.println("Error: Privilege insufficient");
         }catch (DoesNotExistException dneEx){
-        }catch (UpdateException uEx){}
+            System.out.println("Error: Information does not exist");
+        }catch (UpdateException uEx){
+            System.out.println("Error: Cannot update");
+        }
     }
 
     /**
@@ -125,10 +130,15 @@ public class BudgetItemManager {
                     expenseTable.setDescription(selectedBudgetItem.getBUDGET_ITEM_ID(), description);
                 }
             }
-        }catch ( AuthorizationException authEx){
-        }catch ( PrivilegeInsufficientException privEx){
+        }catch (AuthorizationException authEx){
+            System.out.println("Error: Lacking authority");
+        }catch (PrivilegeInsufficientException privEx){
+            System.out.println("Error: Privilege insufficient");
         }catch (DoesNotExistException dneEx){
-        }catch (UpdateException uEx){}
+            System.out.println("Error: Information does not exist");
+        }catch (UpdateException uEx){
+            System.out.println("Error: Cannot update");
+        }
     }
 
     /**
@@ -157,8 +167,13 @@ public class BudgetItemManager {
                 }
             }
         }catch (AuthorizationException authEx){
+            System.out.println("Error: Lacking authority");
         }catch (PrivilegeInsufficientException privEx){
+            System.out.println("Error: Privilege insufficient");
         }catch (DoesNotExistException dneEx){
-        }catch (UpdateException uEx){}
+            System.out.println("Error: Information does not exist");
+        }catch (UpdateException uEx){
+            System.out.println("Error: Cannot update");
+        }
     }
 }

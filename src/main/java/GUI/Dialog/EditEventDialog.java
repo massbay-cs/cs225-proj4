@@ -12,6 +12,7 @@ import BackEnd.ManagerSystem.ManagerExceptions.PrivilegeInsufficientException;
 import BackEnd.UserSystem.Location;
 import EMS_Database.DoesNotExistException;
 import GUI.DesignDefault;
+import auth.AuthorizationException;
 import exception.UpdateException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -218,6 +219,8 @@ public class EditEventDialog extends javax.swing.JDialog {
         catch (UpdateException error) {
             JOptionPane.showMessageDialog(this, "Unable to add SubEvent.");
             System.out.println("Update SubEvent error in EditEventDialog: " + error.getMessage());
+        }catch (AuthorizationException ex){
+            System.out.println("Error: Lacking authority");
         }
     }//GEN-LAST:event_saveSubEventButtonActionPerformed
 

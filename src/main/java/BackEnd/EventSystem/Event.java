@@ -206,7 +206,9 @@ public class Event extends ScheduleItem implements Reportable {
                 //committee.add("" + committeeList.get(i).getChair().getEventCreationPrivilege());
                 committee.add("" + getCommitteeList().get(i).getChair().getPhoneNumber());
                 committee.add("" + getCommitteeList().get(i).getChair().getUserId());
-            }catch (AuthorizationException authEx){}
+            }catch (AuthorizationException authEx){
+                System.out.println("Error: Lacking authority");
+            }
 
             for (int j = 0; j < getCommitteeList().get(i).getMemberList().size(); j++) {
                 numOfMembers++;

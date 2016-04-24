@@ -20,7 +20,7 @@ public abstract class Level {
      * @param otherLevel privilege level of the affected user if table is <code>USER</code>; otherwise, <code>null</code>
      * @throws AuthorizationException if the current user lacks permission
      */
-    public void checkPermission(String table, String field, Operation operation, Who who, PrivilegeLevel otherLevel) throws AuthorizationException {
+    public void checkPermission(String table, String field, Operation operation, Who who, PrivilegeLevel otherLevel){
         table = table.toUpperCase();
         if (field != null) {
             field = field.toUpperCase();
@@ -28,17 +28,35 @@ public abstract class Level {
 
         Context context = getContext(table, field, operation, who, otherLevel);
 
-        switch (table) {
-            case "USERS":       checkPermissionUsers    (context); break;
-            case "EVENTS":      checkPermissionEvents   (context); break;
-            case "SUBEVENTS":   checkPermissionSubEvents(context); break;
-            case "COMMITTEE":   checkPermissionCommittee(context); break;
-            case "TASKS":       checkPermissionTasks    (context); break;
-            case "INCOME":      checkPermissionIncome   (context); break;
-            case "EXPENSE":     checkPermissionExpense  (context); break;
+        try {
+            switch (table) {
+                case "USERS":
+                    checkPermissionUsers(context);
+                    break;
+                case "EVENTS":
+                    checkPermissionEvents(context);
+                    break;
+                case "SUBEVENTS":
+                    checkPermissionSubEvents(context);
+                    break;
+                case "COMMITTEE":
+                    checkPermissionCommittee(context);
+                    break;
+                case "TASKS":
+                    checkPermissionTasks(context);
+                    break;
+                case "INCOME":
+                    checkPermissionIncome(context);
+                    break;
+                case "EXPENSE":
+                    checkPermissionExpense(context);
+                    break;
 
-            default:
-                throw new IllegalArgumentException("Bad table: " + table);
+                default:
+                    throw new IllegalArgumentException("Bad table: " + table);
+            }
+        }catch (AuthorizationException ex){
+            System.out.println("Error: Lacking authority");
         }
     }
 

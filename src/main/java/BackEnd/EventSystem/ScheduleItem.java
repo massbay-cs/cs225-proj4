@@ -71,9 +71,9 @@ public class ScheduleItem {
     public boolean equals(ScheduleItem scheduleItem) {
 
         boolean ts = false;
-        try{
+
             ts = this.getTimeSchedule().equals(scheduleItem.getTimeSchedule());
-        }catch (AuthorizationException authEx){}
+
         if (this.getTitle().equalsIgnoreCase(scheduleItem.getTitle()) &&
                 this.getDescription().equalsIgnoreCase(scheduleItem.getDescription())
                 && this.getLocation().equals(scheduleItem.getLocation())

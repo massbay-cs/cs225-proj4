@@ -26,7 +26,11 @@ public class NewSubEventDialog extends javax.swing.JDialog {
     
     public NewSubEventDialog(java.awt.Frame parent, SubEvent s, boolean modal) {
         super(parent, modal);
-        sep = new SubEventPanel(s);
+        try {
+            sep = new SubEventPanel(s);
+        }catch (AuthorizationException ex){
+            System.out.println("Error: Lacking authority");
+        }
         initComponents();
         /* Added following line to center dialog. -Ketty */
         setLocationRelativeTo(null);
@@ -42,7 +46,12 @@ public class NewSubEventDialog extends javax.swing.JDialog {
     
     public SubEvent createEvent()
     {
-        return sep.createEvent();
+        try{
+            return sep.createEvent();
+        }catch (AuthorizationException ex){
+            System.out.println("Error: Lacking authority");
+        }
+        return null;
     }
     
     /**

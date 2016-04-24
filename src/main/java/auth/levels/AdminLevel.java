@@ -11,208 +11,228 @@ public class AdminLevel extends Level {
         return PrivilegeLevel.ADMIN; 
     }
     @Override
-    public void checkPermission(String table, String field, Operation operation, Who who, PrivilegeLevel otherLevel) throws AuthorizationException {
+    public void checkPermission(String table, String field, Operation operation, Who who, PrivilegeLevel otherLevel){
         super.checkPermission(table, field, operation, who, otherLevel);
     }@Override
-    protected void checkPermissionTasks(Context context) throws AuthorizationException {
-        switch (context.getFieldForSwitch()){
-            case "DESCRIPTION":
-                context.cannotDelete();
-                break;
-            case "DETAILS":
-                context.cannotDelete();
-                break;
-            case "TITLE":
-                context.cannotDelete();
-                break;
-            case "STREET":
-                context.cannotDelete();
-                break;
-            case "CITY":
-                context.cannotDelete();
-                break;
-            case "STATE":
-                context.cannotDelete();
-                break;
-            case "ZIPCODE":
-                context.cannotDelete();
-                break;
-            case "COUNTRY":
-                context.cannotDelete();
-                break;
-            case "STARTDATE":
-                context.cannotDelete();
-                break;
-            case "ENDDATE":
-                context.cannotDelete();
-                break;
-            case "COMPLETE":
-                context.cannotDelete();
-                break;
-            case "MANAGER":
-                context.cannotDelete();
-                break;
-            default:
-                throw new UnknownFieldException(context);
+    protected void checkPermissionTasks(Context context) {
+        try {
+            switch (context.getFieldForSwitch()) {
+                case "DESCRIPTION":
+                    context.cannotDelete();
+                    break;
+                case "DETAILS":
+                    context.cannotDelete();
+                    break;
+                case "TITLE":
+                    context.cannotDelete();
+                    break;
+                case "STREET":
+                    context.cannotDelete();
+                    break;
+                case "CITY":
+                    context.cannotDelete();
+                    break;
+                case "STATE":
+                    context.cannotDelete();
+                    break;
+                case "ZIPCODE":
+                    context.cannotDelete();
+                    break;
+                case "COUNTRY":
+                    context.cannotDelete();
+                    break;
+                case "STARTDATE":
+                    context.cannotDelete();
+                    break;
+                case "ENDDATE":
+                    context.cannotDelete();
+                    break;
+                case "COMPLETE":
+                    context.cannotDelete();
+                    break;
+                case "MANAGER":
+                    context.cannotDelete();
+                    break;
+                default:
+                    throw new UnknownFieldException(context);
+            }
+        }catch (AuthorizationException ex){
+            System.out.println("Error: Lacking authority");
         }
     }
     @Override
-    protected void checkPermissionIncome(Context context) throws AuthorizationException {
-        switch (context.getFieldForSwitch()){
-            case "DESCRIPTION":
-                context.cannotDelete();
-                break;
-            case "DATE":
-                context.cannotDelete();
-                break;
-            case "VALUE":
-                context.cannotDelete();
-                break;
-            default:
-                throw new UnknownFieldException(context);
+    protected void checkPermissionIncome(Context context) {
+        try {
+            switch (context.getFieldForSwitch()) {
+                case "DESCRIPTION":
+                    context.cannotDelete();
+                    break;
+                case "DATE":
+                    context.cannotDelete();
+                    break;
+                case "VALUE":
+                    context.cannotDelete();
+                    break;
+                default:
+                    throw new UnknownFieldException(context);
+            }
+        }catch (AuthorizationException ex){
+            System.out.println("Error: Lacking authority");
         }
     }
 
     @Override
-    protected void checkPermissionExpense(Context context) throws AuthorizationException {
-        switch (context.getFieldForSwitch()){
-            case "DESCRIPTION":
-                context.cannotDelete();
-                break;
-            case "DATE":
-                context.cannotDelete();
-                break;
-            case "VALUE":
-                context.cannotDelete();
-            default:
-                throw new UnknownFieldException(context);
+    protected void checkPermissionExpense(Context context) {
+        try {
+            switch (context.getFieldForSwitch()) {
+                case "DESCRIPTION":
+                    context.cannotDelete();
+                    break;
+                case "DATE":
+                    context.cannotDelete();
+                    break;
+                case "VALUE":
+                    context.cannotDelete();
+                default:
+                    throw new UnknownFieldException(context);
+            }
+        }catch (AuthorizationException ex){
+            System.out.println("Error: Lacking authority");
         }
     }
     @Override
-    protected void checkPermissionSubEvents(Context context) throws AuthorizationException {
-        switch (context.getFieldForSwitch()) {
-            case "":
-                context.cannotDelete();
-                break;
+    protected void checkPermissionSubEvents(Context context) {
+        try {
+            switch (context.getFieldForSwitch()) {
+                case "":
+                    context.cannotDelete();
+                    break;
 
-            case "DESCRIPTION":
-                context.cannotDelete();
-                break;
+                case "DESCRIPTION":
+                    context.cannotDelete();
+                    break;
 
-            case "DETAILS":
-                context.cannotDelete();
+                case "DETAILS":
+                    context.cannotDelete();
 
-                break;
+                    break;
 
-            case "TITLE":
-                context.cannotDelete();
-                break;
+                case "TITLE":
+                    context.cannotDelete();
+                    break;
 
-            case "STARTTIME":
-                context.cannotDelete();
-                break;
+                case "STARTTIME":
+                    context.cannotDelete();
+                    break;
 
-            case "ENDTIME":
-                context.cannotDelete();
-                break;
+                case "ENDTIME":
+                    context.cannotDelete();
+                    break;
 
-            case "COMPLETE":
-                context.cannotDelete();
-                break;
+                case "COMPLETE":
+                    context.cannotDelete();
+                    break;
 
-            case "STREET":
-                context.cannotDelete();
-                break;
+                case "STREET":
+                    context.cannotDelete();
+                    break;
 
-            case "CITY":
-                context.cannotDelete();
-                break;
+                case "CITY":
+                    context.cannotDelete();
+                    break;
 
-            case "STATE":
-                context.cannotDelete();
-                break;
+                case "STATE":
+                    context.cannotDelete();
+                    break;
 
-            case "ZIPCODE":
-                context.cannotDelete();
-                break;
+                case "ZIPCODE":
+                    context.cannotDelete();
+                    break;
 
-            case "COUNTRY":
-                context.cannotDelete();
-                break;
+                case "COUNTRY":
+                    context.cannotDelete();
+                    break;
 
-            default:
-                throw new UnknownFieldException(context);
+                default:
+                    throw new UnknownFieldException(context);
+            }
+        }catch (AuthorizationException ex){
+            System.out.println("Error: Lacking authority");
         }
     }
     @Override
-    protected void checkPermissionEvents(Context context) throws AuthorizationException {
-        switch (context.getFieldForSwitch()) {
-            case "":
-                context.cannotDelete();
-                break;
+    protected void checkPermissionEvents(Context context) {
+        try {
+            switch (context.getFieldForSwitch()) {
+                case "":
+                    context.cannotDelete();
+                    break;
 
-            case "DESCRIPTION":
-                context.cannotDelete();
-                break;
+                case "DESCRIPTION":
+                    context.cannotDelete();
+                    break;
 
-            case "DETAILS":
-                context.cannotDelete();
-                break;
+                case "DETAILS":
+                    context.cannotDelete();
+                    break;
 
-            case "TITLE":
-                context.cannotDelete();
-                break;
+                case "TITLE":
+                    context.cannotDelete();
+                    break;
 
-            case "STARTDATE":
-                context.cannotDelete();
-                break;
+                case "STARTDATE":
+                    context.cannotDelete();
+                    break;
 
-            case "ENDDATE":
-                context.cannotDelete();
-                break;
+                case "ENDDATE":
+                    context.cannotDelete();
+                    break;
 
-            case "COMPLETE":
-                context.cannotDelete();
-                break;
+                case "COMPLETE":
+                    context.cannotDelete();
+                    break;
 
-            case "STREET":
-                context.cannotDelete();
-                break;
+                case "STREET":
+                    context.cannotDelete();
+                    break;
 
-            case "CITY":
-                context.cannotDelete();
-                break;
+                case "CITY":
+                    context.cannotDelete();
+                    break;
 
-            case "STATE":
-                context.cannotDelete();
-                break;
+                case "STATE":
+                    context.cannotDelete();
+                    break;
 
-            case "ZIPCODE":
-                context.cannotDelete();
-                break;
+                case "ZIPCODE":
+                    context.cannotDelete();
+                    break;
 
-            case "COUNTRY":
-                context.cannotDelete();
-                break;
+                case "COUNTRY":
+                    context.cannotDelete();
+                    break;
 
-            case "ORGANIZERLIST":
-                context.cannotDelete();
-                break;
+                case "ORGANIZERLIST":
+                    context.cannotDelete();
+                    break;
 
-            case "SUBEVENTLIST":
-                context.cannotModify();
-                break;
+                case "SUBEVENTLIST":
+                    context.cannotModify();
+                    break;
 
-            case "PARTICIPANTLIST":
-                context.cannotModify();
-                break;
+                case "PARTICIPANTLIST":
+                    context.cannotModify();
+                    break;
 
-            case "COMMITTEE":
-                context.cannotModify();
-                break;
+                case "COMMITTEE":
+                    context.cannotModify();
+                    break;
 
-            default:
-                throw new UnknownFieldException(context);
+                default:
+                    throw new UnknownFieldException(context);
+            }
+        }catch (AuthorizationException ex ){
+            System.out.println("Error: Lacking authority");
         }
     }
     @Override
@@ -221,7 +241,9 @@ public class AdminLevel extends Level {
             case "":
                 try{
                     context.cannotDelete();
-                }catch(AuthorizationException authEx ){}
+                }catch(AuthorizationException authEx ){
+                    System.out.println("Error: Lacking authority");
+                }
                 break;
 
             case "LEVEL":
@@ -331,42 +353,46 @@ public class AdminLevel extends Level {
         }
     }
     @Override
-    protected void checkPermissionCommittee(Context context) throws AuthorizationException {
-        switch (context.getFieldForSwitch()) {
-            case "TITLE":
-                context.cannotDelete();
-                break;
+    protected void checkPermissionCommittee(Context context) {
+        try {
+            switch (context.getFieldForSwitch()) {
+                case "TITLE":
+                    context.cannotDelete();
+                    break;
 
-            case "CHAIRMAN":
-                context.cannotDelete();
-                break;
+                case "CHAIRMAN":
+                    context.cannotDelete();
+                    break;
 
-            case "BUDGETACCESS":
-                context.cannotDelete();
-                break;
+                case "BUDGETACCESS":
+                    context.cannotDelete();
+                    break;
 
-            case "MEMBERS":
-                context.cannotDelete();
-                break;
+                case "MEMBERS":
+                    context.cannotDelete();
+                    break;
 
-            case "TASKS":
-                context.cannotDelete();
-                break;
+                case "TASKS":
+                    context.cannotDelete();
+                    break;
 
-            case "INCOME":
-                context.cannotDelete();
-                break;
+                case "INCOME":
+                    context.cannotDelete();
+                    break;
 
-            case "EXPENSE":
-                context.cannotDelete();
-                break;
+                case "EXPENSE":
+                    context.cannotDelete();
+                    break;
 
-            case "BUDGET":
-                context.cannotDelete();
-                break;
+                case "BUDGET":
+                    context.cannotDelete();
+                    break;
 
-            default:
-                throw new UnknownFieldException(context);
+                default:
+                    throw new UnknownFieldException(context);
+            }
+        }catch (AuthorizationException ex){
+            System.out.println("Error: Lacking authority");
         }
     }
 }

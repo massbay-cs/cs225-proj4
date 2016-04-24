@@ -138,7 +138,9 @@ public class Task extends ScheduleItem implements Reportable {
                 responsible.add("" + getResponsibleList().get(i).getPrivilegeLevel().name());
                 responsible.add("" + getResponsibleList().get(i).getPhoneNumber());
                 responsible.add("" + getResponsibleList().get(i).getUserId());
-            }catch (AuthorizationException authEx){}
+            }catch (AuthorizationException authEx){
+                System.out.println("Error: Lacking authority");
+            }
 
         }
         
@@ -147,10 +149,8 @@ public class Task extends ScheduleItem implements Reportable {
         report.add("" + this.getDescription());
         report.add("" + this.getTitle());
         report.add("" + this.getLocation());
-         try {
-             report.add("" + this.getTimeSchedule().getEndDateTimeCalendar());
-             report.add("" + this.getTimeSchedule().getStartDateTimeCalendar());
-         }catch (AuthorizationException authEx){}
+         report.add("" + this.getTimeSchedule().getEndDateTimeCalendar());
+         report.add("" + this.getTimeSchedule().getStartDateTimeCalendar());
 
         return report;
     }

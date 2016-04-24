@@ -95,17 +95,15 @@ public class SubEvent extends ScheduleItem implements Reportable {
     @Override
     public ArrayList<Object> getReport() {
         ArrayList<Object> report = new ArrayList<Object>();
-        try {
-            report.add("" + this.getTitle());
-            report.add("" + this.getDescription());
-            report.add("" + this.getLocation().getCity());
-            report.add("" + this.getLocation().getCountry());
-            report.add("" + this.getLocation().getState());
-            report.add("" + this.getLocation().getStreet());
-            report.add("" + this.getLocation().getZipCode());
-            report.add("" + this.getTimeSchedule().getStartDateTimeCalendar().getTime().getDay());
-            report.add("" + this.getTimeSchedule().getEndDateTimeCalendar().getTime().getDay());
-        }catch (AuthorizationException authEx){}
+        report.add("" + this.getTitle());
+        report.add("" + this.getDescription());
+        report.add("" + this.getLocation().getCity());
+        report.add("" + this.getLocation().getCountry());
+        report.add("" + this.getLocation().getState());
+        report.add("" + this.getLocation().getStreet());
+        report.add("" + this.getLocation().getZipCode());
+        report.add("" + this.getTimeSchedule().getStartDateTimeCalendar().getTime().getDay());
+        report.add("" + this.getTimeSchedule().getEndDateTimeCalendar().getTime().getDay());
 
         return report;
     }

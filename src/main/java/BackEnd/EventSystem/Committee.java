@@ -69,11 +69,10 @@ public class Committee implements Reportable {
     boolean isFinished() {
         boolean completed = true;
 
-        try {
-            for (Task task : getTaskList())
-                if (!task.getCompleted())
-                    completed = false;
-        }catch (AuthorizationException authEx){}
+
+        for (Task task : getTaskList())
+            if (!task.getCompleted())
+                completed = false;
         return completed;
     }
 
@@ -83,13 +82,11 @@ public class Committee implements Reportable {
 
         total = getTaskList().size();
 
-        try{
-            for (Task aTaskList : getTaskList()) {
-                if (aTaskList.getCompleted()) {
-                    completed++;
-                }
+        for (Task aTaskList : getTaskList()) {
+            if (aTaskList.getCompleted()) {
+                completed++;
             }
-        }catch (AuthorizationException authEx){}
+        }
 
         return new int[]{completed, total};
     }
@@ -185,11 +182,9 @@ public class Committee implements Reportable {
         float complete = 0.0f;
         float total = taskList.size();
         for (Task t : taskList) {
-            try{
-                if (t.getCompleted()) {
-                    complete += 1;
-                }
-            }catch (AuthorizationException authEx){}
+            if (t.getCompleted()) {
+                complete += 1;
+            }
         }
         pct = (int) (complete / total * 100);
         return pct;
@@ -250,7 +245,9 @@ public class Committee implements Reportable {
                 component.add("" + user.getPrivilegeLevel());
                 component.add("" + user.getPhoneNumber());
                 component.add("" + user.getUserId());
-            }catch (AuthorizationException authEx){}
+            }catch (AuthorizationException authEx){
+                System.out.println("Error: Lacking authority");
+            }
         }
     }
 
