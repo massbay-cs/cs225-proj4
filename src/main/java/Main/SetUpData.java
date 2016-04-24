@@ -60,16 +60,8 @@ public class SetUpData {
             u.setPrivilegeLevel(PrivilegeLevel.ADMIN);
         }catch (AuthorizationException ex){}
 
-        try {
-            u = manager.getUserManager().createUser(u);
-            System.out.println("Admin Created: " + u);
-        } catch (DuplicateEmailException error) {
-            System.out.println("Can't create admin : Duplicate Email");
-        }catch (UpdateException error ){
-            System.out.println("Error: Cannot update");
-        }catch (AuthorizationException error ){
-            System.out.println("Can't create admin: Privilege lacking");
-        }
+        u = manager.getUserManager().createUser(u);
+        System.out.println("Admin Created: " + u);
 
         //Try to create Event
         try {
@@ -227,6 +219,5 @@ public class SetUpData {
             System.out.println("Can't create SubEvents.");
             ex4.printStackTrace();
         }
-
     }
 }

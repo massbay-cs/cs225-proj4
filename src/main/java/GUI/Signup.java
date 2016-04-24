@@ -472,13 +472,8 @@ public class Signup extends javax.swing.JPanel {
                     newUser.setPrivilegeLevel(PrivilegeLevel.ADMIN);
                 }
    
-                try {
-                    newUser = userManager.createUser(newUser);
-                    parentDialog.dispose();
-                }
-                catch (DuplicateEmailException error) {
-                    JOptionPane.showMessageDialog(this, "Email address already exists in the system");
-                }
+                newUser = userManager.createUser(newUser);
+                parentDialog.dispose();
             }
             catch (PasswordMismatchError error) {
                 JOptionPane.showMessageDialog(this, "Passwords do not match.");
@@ -497,11 +492,6 @@ public class Signup extends javax.swing.JPanel {
             }
             catch (ZipCodeInvalidLengthException error) {
                 JOptionPane.showMessageDialog(this, "Please enter a valid zip code.");
-            }
-            catch (UpdateException error)
-            {
-                JOptionPane.showMessageDialog(this, "Cannot save this user.");
-                System.out.println("User update error in Signup: " + error.getMessage());
             }
             catch (AuthorizationException error){
                 JOptionPane.showMessageDialog(this, "You are not authorized to do this.");
