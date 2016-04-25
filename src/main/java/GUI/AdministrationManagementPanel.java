@@ -35,7 +35,7 @@ public class AdministrationManagementPanel extends javax.swing.JPanel implements
 
     public AdministrationManagementPanel() throws DoesNotExistException, AuthorizationException {
         this.setLayout(new BoxLayout(this,BoxLayout.PAGE_AXIS));
-        manage = new MainManager().getInstance();
+        manage = MainManager.getInstance();
         user = manage.getUserManager();
         userList = user.getUserList();
         setTable();
@@ -56,7 +56,7 @@ public class AdministrationManagementPanel extends javax.swing.JPanel implements
     {
         for(int i =0; i < ut.getRowCount(); i++)
         {
-            if((boolean) ut.getValueAt(i, 3) == true)
+            if((boolean) ut.getValueAt(i, 3))
             {
                 System.out.println("row: " + i + " is checked");
                 //update the database on click
@@ -117,7 +117,7 @@ public class AdministrationManagementPanel extends javax.swing.JPanel implements
         public void setValueAt(Object aValue, int row, int column) {
             if (aValue instanceof Boolean && column == 2) {
                 Vector rowData = (Vector) getDataVector().get(row);
-                rowData.set(2, (boolean) aValue);
+                rowData.set(2, aValue);
                 fireTableCellUpdated(row, column);
                 if((boolean) aValue)
                     System.out.println("checked");
