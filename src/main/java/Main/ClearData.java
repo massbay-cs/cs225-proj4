@@ -11,6 +11,9 @@ import EMS_Database.impl.Income_Table;
 import EMS_Database.impl.SubEvent_Table;
 import EMS_Database.impl.Tasks_Table;
 import EMS_Database.impl.UserData_Table;
+import exception.UpdateException;
+
+import javax.swing.*;
 
 /**
  *
@@ -20,34 +23,45 @@ public class ClearData {
     
         public static void main(String[] args)
         {
-            System.out.println("DELETING EVENTS");
-            Events_Table edt = new Events_Table();
-            edt.removeAll("EVENTS");
-        
-            System.out.println("DELETING USERS");
-            UserData_Table udt = new UserData_Table();
-            udt.removeAll("USERS");
-        
-            System.out.println("DELETING COMMITTEES");
-            Committees_Table ct = new Committees_Table();
-            ct.removeAll("COMMITTEE");
-        
-            System.out.println("DELETINGSUBEVENTS");
-            SubEvent_Table set = new SubEvent_Table();
-            set.removeAll("SUBEVENTS");
-        
-            System.out.println("DELETING TASKS");
-            Tasks_Table tt = new Tasks_Table();
-            tt.removeAll("TASKS");
-            
-            System.out.println("DELETING INCOMES");
-            Income_Table incomeTable = new Income_Table();
-            incomeTable.removeAll("INCOME");
-            
-            System.out.println("DELETING EXPENSES");
-            Expense_Table expenseTable = new Expense_Table();
-            expenseTable.removeAll("EXPENSE");
-//            MainManager manager = MainManager.getInstance();
+            try {
+                System.out.println("DELETING EVENTS");
+                Events_Table edt = new Events_Table();
+                edt.removeAll("EVENTS");
+
+                System.out.println("DELETING USERS");
+                UserData_Table udt = new UserData_Table();
+                udt.removeAll("USERS");
+
+                System.out.println("DELETING COMMITTEES");
+                Committees_Table ct = new Committees_Table();
+                ct.removeAll("COMMITTEE");
+
+                System.out.println("DELETINGSUBEVENTS");
+                SubEvent_Table set = new SubEvent_Table();
+                set.removeAll("SUBEVENTS");
+
+                System.out.println("DELETING TASKS");
+                Tasks_Table tt = new Tasks_Table();
+                tt.removeAll("TASKS");
+
+                System.out.println("DELETING INCOMES");
+                Income_Table incomeTable = new Income_Table();
+                incomeTable.removeAll("INCOME");
+
+                System.out.println("DELETING EXPENSES");
+                Expense_Table expenseTable = new Expense_Table();
+                expenseTable.removeAll("EXPENSE");
+            }
+            catch(UpdateException error)
+            {
+                System.out.println("There was an update exception: " + error.getMessage());
+            }
+            catch(auth.AuthorizationException error)
+            {
+                System.out.println("There was an authorization exception: " + error.getMessage());
+            }
+//
+// MainManager manager = MainManager.getInstance();
 //            try
 //            {
 //                User u = new User("Alpha","Bravo","AB@AB.com","ab","ab");

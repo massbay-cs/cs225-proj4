@@ -9,7 +9,7 @@ import BackEnd.UserSystem.Participant;
 import BackEnd.UserSystem.User;
 import GUI.DesignDefault;
 
-import javax.swing.DefaultListModel;
+import javax.swing.*;
 
 /**
  *
@@ -39,11 +39,17 @@ public class FindMemberDialog extends javax.swing.JDialog {
     public void updateInfo()
     {
         DefaultListModel model = new DefaultListModel();
-        for(Participant p : manager.getUserManager().getUserList())
-        {
-            model.addElement(p.getFirstName() + " " + p.getLastName());
+        try {
+            for (Participant p : manager.getUserManager().getUserList()) {
+                model.addElement(p.getFirstName() + " " + p.getLastName());
+            }
+            memberList.setModel(model);
         }
-        memberList.setModel(model);
+        catch(auth.AuthorizationException error)
+        {
+            JOptionPane.showMessageDialog(this, "Unable to add event.");
+            System.out.println("There was an authorization exception: " + error.getMessage());
+        }
     }
     
     public boolean getConfirm()

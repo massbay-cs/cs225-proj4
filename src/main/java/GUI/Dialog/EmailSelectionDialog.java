@@ -8,6 +8,8 @@ import BackEnd.EventSystem.Committee;
 import BackEnd.ManagerSystem.MainManager;
 import BackEnd.UserSystem.Participant;
 import BackEnd.UserSystem.User;
+import auth.AuthorizationException;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import javax.swing.DefaultListModel;
@@ -69,14 +71,27 @@ public class EmailSelectionDialog extends javax.swing.JDialog {
             if(o instanceof User)
             {
                 User u = (User)o;
-                addr.add(u.getEmailAddress());
+
+                try
+                {
+                    addr.add(u.getEmailAddress());
+                }
+                catch (AuthorizationException error) {
+                    System.out.println("here was an authorization exception: " + error.getMessage());
+                }
             }
             else if(o instanceof Committee)
             {
                 Committee c = (Committee)o;
                 for(User cu : c.getMemberList())
                 {
-                    addr.add(cu.getEmailAddress());
+                    try
+                    {
+                        addr.add(cu.getEmailAddress());
+                    }
+                    catch (AuthorizationException error) {
+                        System.out.println("here was an authorization exception: " + error.getMessage());
+                    }
                 }
             }
         }

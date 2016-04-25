@@ -219,6 +219,11 @@ public class EditSubEventDialog extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Cannot save this SubEvent.");
             System.out.println("Subevent update error in EditSubEventDialog: " + error.getMessage());
         }
+        catch(auth.AuthorizationException error)
+        {
+            JOptionPane.showMessageDialog(this, "Cannot save this subEvent.");
+            System.out.println("There was an authorization exception: " + error.getMessage());
+        }
     }//GEN-LAST:event_saveSubEventButtonActionPerformed
 
     private void editTimeScheduleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editTimeScheduleButtonActionPerformed

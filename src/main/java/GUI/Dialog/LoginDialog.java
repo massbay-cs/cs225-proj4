@@ -8,8 +8,8 @@ import GUI.Dialog.ExceptionDialogs.PasswordExceptionDialog;
 import BackEnd.ManagerSystem.ManagerExceptions.LogInIncorrectException;
 import BackEnd.ManagerSystem.MainManager;
 import GUI.Signup;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
+
+import javax.swing.*;
 import java.awt.event.KeyEvent;
 
 /**
@@ -48,6 +48,11 @@ public class LoginDialog extends javax.swing.JDialog {
         } catch (LogInIncorrectException e) {
             PasswordExceptionDialog passwordExceptionDialog = new PasswordExceptionDialog(new JFrame(), true, e);
             passwordExceptionDialog.setVisible(true);
+        }
+        catch(auth.AuthorizationException error)
+        {
+            JOptionPane.showMessageDialog(this, "Unable to add event.");
+            System.out.println("There was an authorization exception: " + error.getMessage());
         }
     }
 

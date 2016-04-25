@@ -8,6 +8,7 @@ import BackEnd.EventSystem.Event;
 import BackEnd.ManagerSystem.MainManager;
 import BackEnd.ManagerSystem.ManagerExceptions.PrivilegeInsufficientException;
 import EMS_Database.DoesNotExistException;
+import EMS_Database.DuplicateInsertionException;
 import GUI.Reportable.EventReport;
 import auth.AuthorizationException;
 
@@ -441,8 +442,28 @@ public class Main extends javax.swing.JPanel {
         logOutButton.setMinimumSize(new java.awt.Dimension(150, 25));
         logOutButton.setPreferredSize(new java.awt.Dimension(150, 25));
         logOutButton.addActionListener(new java.awt.event.ActionListener() {
+
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                logOutButtonActionPerformed(evt);
+                try
+                {
+                    logOutButtonActionPerformed(evt);
+                }
+                catch (AuthorizationException error)
+                {
+                    System.out.println("There was an authorization exception: "+ error.getMessage());
+                }
+                catch (PrivilegeInsufficientException error)
+                {
+                    System.out.println("There was a priviledge exception: " + error.getMessage());
+                }
+                catch (DuplicateInsertionException error)
+                {
+                    System.out.println("There was a duplicate insertion: " + error.getMessage());
+                }
+                catch (DoesNotExistException error)
+                {
+                    System.out.println("" + error.getMessage());
+                }
             }
         });
 
@@ -538,7 +559,7 @@ public class Main extends javax.swing.JPanel {
         ump.updateLabels();
     }//GEN-LAST:event_changeUserManagementButtonActionPerformed
 
-    private void logOutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutButtonActionPerformed
+    private void logOutButtonActionPerformed(java.awt.event.ActionEvent evt) throws AuthorizationException, PrivilegeInsufficientException, DuplicateInsertionException, DoesNotExistException {//GEN-FIRST:event_logOutButtonActionPerformed
         home.logOut();
     }//GEN-LAST:event_logOutButtonActionPerformed
 

@@ -519,6 +519,21 @@ public class CalendarPanel extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(this, "Unable to add event.");
                 System.out.println("Update event error in Calendar Panel: " + error.getMessage());
             }
+            catch(PrivilegeInsufficientException error)
+            {
+                JOptionPane.showMessageDialog(this, "Unable to add event.");
+                System.out.println("There was a privilege exception: " + error.getMessage());
+            }
+            catch(EMS_Database.DoesNotExistException error)
+            {
+                JOptionPane.showMessageDialog(this, "Unable to add event.");
+                System.out.println("" + error.getMessage());
+            }
+            catch(auth.AuthorizationException error)
+            {
+                JOptionPane.showMessageDialog(this, "Unable to add event.");
+                System.out.println("There was an authorization exception: " + error.getMessage());
+            }
         }
     }//GEN-LAST:event_addEventButtonActionPerformed
 
@@ -542,6 +557,12 @@ public class CalendarPanel extends javax.swing.JPanel {
                 {
                     JOptionPane.showMessageDialog(this, "Unable to remove event.");
                     System.out.println("Event deletion error in Calendar Panel: " + error.getMessage());
+                }
+                catch(auth.AuthorizationException error)
+                {
+
+                    JOptionPane.showMessageDialog(this, "Unable to remove event.");
+                    System.out.println("There was an authorization exception: " + error.getMessage());
                 }
                 populateCalendar();
                 updateDetailsList((CalendarEvent) calendarTable.getValueAt(selectedRow, selectedColumn));
