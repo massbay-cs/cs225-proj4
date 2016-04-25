@@ -14,7 +14,11 @@ public class LoggedOutLevel extends Level {
 
     @Override
     protected void checkPermissionUsers(Context context) throws AuthorizationException {
-        context.noAccess();
+        // Allow users to register
+        context
+                .cannotDelete()
+                .cannotViewOther()
+                .cannotModifyOther();
     }
 
     @Override

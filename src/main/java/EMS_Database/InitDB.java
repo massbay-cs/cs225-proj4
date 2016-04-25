@@ -66,8 +66,8 @@ public abstract class InitDB implements Interface_FunctionWrapper {
             debugLog.info("Database Connected Successfully.");
 
             //create tables if none exist.
-            String createUserTable = "CREATE TABLE IF NOT EXISTS USERS (UID INT PRIMARY KEY AUTOINCREMENT, "
-                    + "LEVEL INT, "
+            String createUserTable = "CREATE TABLE IF NOT EXISTS USERS (UID INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + "LEVEL INTEGER, "
                     + "FNAME VARCHAR(50) DEFAULT NULL, "
                     + "LNAME VARCHAR(50) DEFAULT NULL, "
                     + "PWD VARCHAR(256) NOT NULL, "
@@ -79,13 +79,13 @@ public abstract class InitDB implements Interface_FunctionWrapper {
                     + "ZIPCODE VARCHAR(20) DEFAULT NULL, "
                     + "COUNTRY VARCHAR(100) DEFAULT NULL)";
 
-            String createEventsTable = "CREATE TABLE IF NOT EXISTS EVENTS (UID INT PRIMARY KEY AUTOINCREMENT, "
+            String createEventsTable = "CREATE TABLE IF NOT EXISTS EVENTS (UID INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + "DESCRIPTION VARCHAR(5000) DEFAULT NULL, "
                     + "DETAILS VARCHAR(500) DEFAULT NULL, "
                     + "TITLE VARCHAR(100) DEFAULT NULL, "
                     + "STARTDATE TIMESTAMP, "
                     + "ENDDATE TIMESTAMP, "
-                    + "COMPLETE INT, "
+                    + "COMPLETE INTEGER, "
                     + "STREET VARCHAR(100) DEFAULT NULL, "
                     + "CITY VARCHAR(100) DEFAULT NULL, "
                     + "STATE VARCHAR(50) DEFAULT NULL, "
@@ -96,11 +96,11 @@ public abstract class InitDB implements Interface_FunctionWrapper {
                     + "PARTICIPANT VARCHAR(500) DEFAULT NULL, " //participant list
                     + "COMMITTEE VARCHAR(160) DEFAULT NULL)"; //committee list
 
-            String createSubEventTable = "CREATE TABLE IF NOT EXISTS SUBEVENTS (UID INT PRIMARY KEY AUTOINCREMENT, "
+            String createSubEventTable = "CREATE TABLE IF NOT EXISTS SUBEVENTS (UID INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + "DESCRIPTION VARCHAR(5000) DEFAULT NULL, "
                     + "DETAILS VARCHAR(500) DEFAULT NULL, "
                     + "TITLE VARCHAR(100) DEFAULT NULL, "
-                    + "COMPLETE INT, "
+                    + "COMPLETE INTEGER, "
                     + "STREET VARCHAR(100) DEFAULT NULL, "
                     + "CITY VARCHAR(100) DEFAULT NULL, "
                     + "STATE VARCHAR(50) DEFAULT NULL, "
@@ -109,9 +109,9 @@ public abstract class InitDB implements Interface_FunctionWrapper {
                     + "STARTDATE TIMESTAMP, "
                     + "ENDDATE TIMESTAMP)";
 
-            String createCommitteeTable = "CREATE TABLE IF NOT EXISTS COMMITTEE (UID INT PRIMARY KEY AUTOINCREMENT, "
+            String createCommitteeTable = "CREATE TABLE IF NOT EXISTS COMMITTEE (UID INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + "TITLE VARCHAR(160) DEFAULT NULL, "
-                    + "CHAIRMAN INT, "
+                    + "CHAIRMAN INTEGER, "
                     + "BUDGETACCESS VARCHAR(1000) DEFAULT NULL, " //list of UID #'s
                     + "MEMBERS VARCHAR(1000) DEFAULT NULL, " //list of UID #'s
                     + "TASKS VARCHAR(1000) DEFAULT NULL, " //list of task UID #'s
@@ -119,7 +119,7 @@ public abstract class InitDB implements Interface_FunctionWrapper {
                     + "EXPENSE VARCHAR(1000) DEFAULT NULL, " //list of task UID #'s
                     + "BUDGET DOUBLE)";
 
-            String createTasksTable = "CREATE TABLE IF NOT EXISTS TASKS (UID INT PRIMARY KEY AUTOINCREMENT, "
+            String createTasksTable = "CREATE TABLE IF NOT EXISTS TASKS (UID INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + "DESCRIPTION VARCHAR(5000) DEFAULT NULL, "
                     + "DETAILS VARCHAR(500) DEFAULT NULL, "
                     + "TITLE VARCHAR(100) DEFAULT NULL, "
@@ -130,15 +130,15 @@ public abstract class InitDB implements Interface_FunctionWrapper {
                     + "COUNTRY VARCHAR(100) DEFAULT NULL, "
                     + "STARTDATE TIMESTAMP, "
                     + "ENDDATE TIMESTAMP, "
-                    + "COMPLETE INT, "
+                    + "COMPLETE INTEGER, "
                     + "MANAGER VARCHAR(160) DEFAULT NULL)"; //users in charge of task
 
-            String createIncomeTable = "CREATE TABLE IF NOT EXISTS INCOME (UID INT PRIMARY KEY AUTOINCREMENT, "
+            String createIncomeTable = "CREATE TABLE IF NOT EXISTS INCOME (UID INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + "DESCRIPTION VARCHAR(1000) DEFAULT NULL, "
                     + "DATE TIMESTAMP, "
                     + "VALUE DOUBLE)";
 
-            String createExpenseTable = "CREATE TABLE IF NOT EXISTS EXPENSE (UID INT PRIMARY KEY AUTOINCREMENT, "
+            String createExpenseTable = "CREATE TABLE IF NOT EXISTS EXPENSE (UID INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + "DESCRIPTION VARCHAR(1000) DEFAULT NULL, "
                     + "DATE TIMESTAMP, "
                     + "VALUE DOUBLE)";
