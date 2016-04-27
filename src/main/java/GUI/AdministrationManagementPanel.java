@@ -7,6 +7,9 @@ import javax.swing.table.DefaultTableModel;
 import BackEnd.ManagerSystem.MainManager;
 import BackEnd.UserSystem.Participant;
 import EMS_Database.DoesNotExistException;
+import auth.PrivilegeLevel;
+import exception.UpdateException;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,12 +37,7 @@ public class AdministrationManagementPanel extends javax.swing.JPanel implements
         manage = new MainManager().getInstance();
         user = manage.getUserManager();
         userList = user.getUserList();
-        try {
-            setTable();
-        } catch (DoesNotExistException e) {
-            e.printStackTrace();
-        }
-
+        setTable();
         scrollBar = new JScrollPane(userTable);
         scrollBar.setVisible(true);
         submit = new JButton("Submit");
@@ -56,10 +54,28 @@ public class AdministrationManagementPanel extends javax.swing.JPanel implements
     {
         for(int i =0; i < ut.getRowCount(); i++)
         {
-            if((boolean) ut.getValueAt(i, 2) == true)
+            if((boolean) ut.getValueAt(i, 3) == true)
             {
                 System.out.println("row: " + i + " is checked");
                 //update the database on click
+                try
+                {
+                    user.getUsersTable().setPrivilegeLevel((int) ut.getValueAt(i,3), PrivilegeLevel.ADMIN);
+                    System.out.println((ut.getValueAt(i, 0) + " has been promoted to admin"));
+                    setTable();
+                }catch(DoesNotExistException ex)
+                {
+                    System.out.println("That user cannot be found: " + ex.getMessage());
+                }
+                catch(auth.AuthorizationException aex)
+                {
+                    System.out.println("You do not have proper authorization level for this content: " + aex.getMessage());
+                    this.setVisible(false);
+                }catch(UpdateException uex)
+                {
+                    System.out.println("Could not update the database: " + uex.getMessage());
+                }
+
             }
         }
     }
@@ -68,13 +84,23 @@ public class AdministrationManagementPanel extends javax.swing.JPanel implements
      * set up the table for all users that are not already admins
      * @throws DoesNotExistException
      */
-    public void setTable() throws DoesNotExistException {
+    public void setTable()  {
         ut = new AdminPanelTable();
         for (int j = 0; j < userList.size(); j++)
         {
-            if(user.getUsersTable().getLevel(userList.get(j).getUserId()) == 0)
-                ut.addRow(new Object[]{userList.get(j).getFirstName(), userList.get(j).getLastName(), false});
+            try
+            {
+                if(user.getUsersTable().getPrivilegeLevel(userList.get(j).getUserId()) != PrivilegeLevel.ADMIN)
 
+                    ut.addRow(new Object[]{userList.get(j).getFirstName(), userList.get(j).getLastName(), userList.get(j).getPrivilegeLevel(), false});
+                }catch(DoesNotExistException ex)
+                {
+                    System.out.println("Does not exist: " + ex.getMessage());
+                }catch(auth.AuthorizationException aex)
+                {
+                    System.out.println("you do not have the proper authorization level for this content: " + aex.getMessage());
+                    this.setVisible(false);
+                }
         }
         userTable = new JTable(ut);
         userTable.setPreferredScrollableViewportSize(new Dimension(50, 50));
@@ -85,13 +111,13 @@ public class AdministrationManagementPanel extends javax.swing.JPanel implements
     public class AdminPanelTable extends DefaultTableModel
     {
         public AdminPanelTable() {
-            super(new String[]{"First Name", "Last Name", "Make Admin"}, 0);
+            super(new String[]{"First Name", "Last Name", "Current Level", "Make Admin"}, 0);
         }
 
         public Class<?> getColumnClass(int columnIndex) {
             Class clazz = String.class;
             switch (columnIndex) {
-                case 2:
+                case 3:
                     clazz = Boolean.class;
             }
             return clazz;
