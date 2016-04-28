@@ -151,7 +151,8 @@ public class Event extends ScheduleItem implements Reportable {
         else
             return false;
     }
-    
+    /*
+    this method is never used, i checked using findUsages - mike demilia
     public String toString() {
         try(Permissions.SystemTransaction ignored = Permissions.get().beginSystemTransaction()) {
             return "Event Title: " + getTitle() +
@@ -160,7 +161,7 @@ public class Event extends ScheduleItem implements Reportable {
         }
         catch(AuthorizationException ignored){}
         return null;
-    }
+    }*/
     
     @Override
     public ArrayList<Object> getReport() {
@@ -181,13 +182,11 @@ public class Event extends ScheduleItem implements Reportable {
 
         }
         for (int i = 0; i < getSubEventList().size(); i++) {
-            try {
-                subEvent.add("" + getSubEventList().get(i).getTitle());
-                subEvent.add("" + getSubEventList().get(i).getDescription());
-                subEvent.add("" + getSubEventList().get(i).getLocation());
-                subEvent.add("" + getSubEventList().get(i).getTimeSchedule().getStartDateTimeCalendar());
-                subEvent.add("" + getSubEventList().get(i).getTimeSchedule().getEndDateTimeCalendar());
-            }catch (AuthorizationException authEx){}
+            subEvent.add("" + getSubEventList().get(i).getTitle());
+            subEvent.add("" + getSubEventList().get(i).getDescription());
+            subEvent.add("" + getSubEventList().get(i).getLocation());
+            subEvent.add("" + getSubEventList().get(i).getTimeSchedule().getStartDateTimeCalendar());
+            subEvent.add("" + getSubEventList().get(i).getTimeSchedule().getEndDateTimeCalendar());
         }
         int numOfMembers = 0;
         int numOfTasks = 0;
@@ -241,13 +240,13 @@ public class Event extends ScheduleItem implements Reportable {
         report.add(subEvent);
         report.add(committee);
         report.add(participant);
-        try {
-            report.add("" + this.getTitle());
-            report.add("" + this.getLocation());
-            report.add("" + this.getDescription());
-            report.add("" + this.getTimeSchedule().getStartDateTimeCalendar().getTime().getDay());
-            report.add("" + this.getTimeSchedule().getEndDateTimeCalendar().getTime().getDay());
-        }catch (AuthorizationException authEx){}
+
+        report.add("" + this.getTitle());
+        report.add("" + this.getLocation());
+        report.add("" + this.getDescription());
+        report.add("" + this.getTimeSchedule().getStartDateTimeCalendar().getTime().getDay());
+        report.add("" + this.getTimeSchedule().getEndDateTimeCalendar().getTime().getDay());
+
         return report;
     }
 }

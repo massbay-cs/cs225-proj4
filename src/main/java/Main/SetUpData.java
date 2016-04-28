@@ -47,9 +47,14 @@ public class SetUpData {
         Address addr = new Address("Street", "City", "STATE", "00000", "COUNTRY");
         PhoneNumber num = new PhoneNumber("5555555555");
         u.setAddress(addr);
-        u.setPhoneNumber(num);
-        u.setAdminPrivilege(true);
-        u.setEventCreationPrivilege(true);
+        /*
+            old code most of these methods no longer exist.
+
+            u.setPhoneNumber(num);
+            u.setAdminPrivilege(true);
+            u.setEventCreationPrivilege(true);
+            */
+
         try {
             u = manager.getUserManager().createUser(u);
             System.out.println("Admin Created: " + u);
