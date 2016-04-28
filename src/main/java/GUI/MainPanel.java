@@ -13,6 +13,7 @@ import BackEnd.UserSystem.User;
 import EMS_Database.DoesNotExistException;
 import EMS_Database.DuplicateInsertionException;
 import auth.AuthorizationException;
+import auth.PrivilegeLevel;
 import exception.UpdateException;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -86,7 +87,14 @@ public class MainPanel extends javax.swing.JPanel {
         calendarSelectionPanel.add(selectCalendarButton);
         calendarSelectionPanel.add(selectEventDetailsButton);
         calendarSelectionPanel.add(registerForEventButton);
-        calendarSelectionPanel.add(setAdminsButton);
+        if(loggedInUser.getPrivilegeLevel() == PrivilegeLevel.ADMIN)
+        {
+            calendarSelectionPanel.add(setAdminsButton);
+        }
+        else
+        {
+            setAdminsButton.setVisible(false);
+        }
   
         /*
         clearEventButton = new JButton("Clear Event");
@@ -99,7 +107,10 @@ public class MainPanel extends javax.swing.JPanel {
         EventDetailsPanel edp = new EventDetailsPanel();
         calendarSwitchingPanel.add(cp, "calendar");
         calendarSwitchingPanel.add(edp, "eventDetails");
-        calendarSwitchingPanel.add(amp, "adminManagement");
+        if(loggedInUser.getPrivilegeLevel() == PrivilegeLevel.ADMIN)
+        {
+            calendarSwitchingPanel.add(amp, "adminManagement");
+        }
         add(calendarSwitchingPanel, BorderLayout.NORTH);
         add(calendarSelectionPanel, BorderLayout.SOUTH);
     }
