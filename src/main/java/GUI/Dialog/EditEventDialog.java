@@ -218,6 +218,10 @@ public class EditEventDialog extends javax.swing.JDialog {
         catch (UpdateException error) {
             JOptionPane.showMessageDialog(this, "Unable to add SubEvent.");
             System.out.println("Update SubEvent error in EditEventDialog: " + error.getMessage());
+        }catch(auth.AuthorizationException aex)
+        {
+            JOptionPane.showMessageDialog(this, "You do not have proper authorization: " + aex.getMessage());
+            this.setVisible(false);
         }
     }//GEN-LAST:event_saveSubEventButtonActionPerformed
 

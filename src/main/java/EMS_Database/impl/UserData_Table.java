@@ -76,7 +76,7 @@ public class UserData_Table extends InitDB implements Interface_UserData {
             //Execute Statement
             return AddAddressStmt.executeUpdate();
         } catch (SQLException sqle) {
-            throw new UpdateException("Error creating user", sqle);
+            throw new UpdateException("Error creating user: ", sqle);
         }
     }
 

@@ -40,8 +40,7 @@ public class Home extends javax.swing.JFrame {
     /**
      *
      */
-    public Home() throws AuthorizationException, PrivilegeInsufficientException,
-            DoesNotExistException, DuplicateInsertionException{
+    public Home(){
         initComponents();
         manager = MainManager.getInstance();
         /* Added following line to center dialog. -Ketty */
@@ -50,7 +49,24 @@ public class Home extends javax.swing.JFrame {
             logIn();
         }
         while (checkForEvents()) {//CHECK IF WE HAVE EVENTS
-            createFirstEvent();
+            try {
+                createFirstEvent();
+            }catch(auth.AuthorizationException aex)
+            {
+                JOptionPane.showMessageDialog(this, "You do not have proper authorization: " + aex.getMessage());
+                this.setVisible(false);
+            }catch(PrivilegeInsufficientException pex)
+            {
+                JOptionPane.showMessageDialog(this, "You do not have proper privilege level: " + pex.getMessage());
+                this.setVisible(false);
+            }
+            catch(DuplicateInsertionException dex)
+            {
+                JOptionPane.showMessageDialog(this, "There was a duplicate entry " + dex.getMessage());
+            }catch(DoesNotExistException dne)
+            {
+                JOptionPane.showMessageDialog(this, "This content could not be found " + dne.getMessage());
+            }
         }
         loadEvent();
         /* Changed this try block. -Ketty */
@@ -136,8 +152,7 @@ public class Home extends javax.swing.JFrame {
            }
     }
     
-    public void logOut() throws AuthorizationException, PrivilegeInsufficientException,
-        DoesNotExistException, DuplicateInsertionException{
+    public void logOut(){
         dispose();
         manager.getLogInManager().logOut();
         Home home = new Home();
