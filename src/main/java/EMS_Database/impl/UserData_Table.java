@@ -60,19 +60,32 @@ public class UserData_Table extends InitDB implements Interface_UserData {
         try {
             //Creating Statement
             System.out.println("made it here \n");
-            PreparedStatement AddAddressStmt = dbConnection.prepareStatement("INSERT INTO USERS VALUES(NULL,?,?,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+            int i =0;
+            PreparedStatement AddAddressStmt = dbConnection.prepareStatement("INSERT INTO USERS VALUES(NULL,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
             int column = 0;
+            System.out.println("this line is ok: " + i++);
             AddAddressStmt.setInt(++column, user.getPrivilegeLevel().id());
+            System.out.println("this line is ok: " + i++);
             AddAddressStmt.setString(++column, user.getFirstName());
+            System.out.println("this line is ok: " + i++);
             AddAddressStmt.setString(++column, user.getLastName());
+            System.out.println("this line is ok: " + i++);
             AddAddressStmt.setString(++column, user.getPwd());
+            System.out.println("this line is ok: " + i++);
             AddAddressStmt.setString(++column, user.getEmail());
+            System.out.println("this line is ok: " + i++);
             AddAddressStmt.setString(++column, user.getPhone());
+            System.out.println("this line is ok: " + i++);
             AddAddressStmt.setString(++column, user.getStreet());
+            System.out.println("this line is ok: " + i++);
             AddAddressStmt.setString(++column, user.getCity());
+            System.out.println("this line is ok: " + i++);
             AddAddressStmt.setString(++column, user.getState());
+            System.out.println("this line is ok: " + i++);
             AddAddressStmt.setString(++column, user.getZipcode());
+            System.out.println("this line is ok: " + i++);
             AddAddressStmt.setString(++column, user.getCountry());
+            System.out.println("this line is ok: " + i++);
 
             //Execute Statement
             return AddAddressStmt.executeUpdate();
