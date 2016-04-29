@@ -59,6 +59,7 @@ public class UserData_Table extends InitDB implements Interface_UserData {
 
         try {
             //Creating Statement
+            System.out.println("made it here \n");
             PreparedStatement AddAddressStmt = dbConnection.prepareStatement("INSERT INTO USERS VALUES(NULL,?,?,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
             int column = 0;
             AddAddressStmt.setInt(++column, user.getPrivilegeLevel().id());
@@ -76,7 +77,7 @@ public class UserData_Table extends InitDB implements Interface_UserData {
             //Execute Statement
             return AddAddressStmt.executeUpdate();
         } catch (SQLException sqle) {
-            throw new UpdateException("Error creating user: ", sqle);
+            throw new UpdateException("Error creating this damn user: ", sqle);
         }
     }
 
