@@ -12,7 +12,10 @@ import BackEnd.ManagerSystem.ManagerExceptions.PrivilegeInsufficientException;
 import EMS_Database.DoesNotExistException;
 import GUI.Dialog.EditSubEventDialog;
 import GUI.Dialog.NewSubEventDialog;
+import auth.AuthorizationException;
 import exception.UpdateException;
+import jdk.nashorn.internal.scripts.JO;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -519,6 +522,20 @@ public class CalendarPanel extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(this, "Unable to add event.");
                 System.out.println("Update event error in Calendar Panel: " + error.getMessage());
             }
+            catch(PrivilegeInsufficientException pex)
+            {
+                JOptionPane.showMessageDialog(this,"you do not have proper authorization: " + pex.getMessage());
+                this.setVisible(false);
+            }
+            catch(EMS_Database.DoesNotExistException dne)
+            {
+                JOptionPane.showMessageDialog(this, "Unable to find content: " + dne.getMessage());
+            }
+            catch(auth.AuthorizationException aex)
+            {
+                JOptionPane.showMessageDialog(this, "You do not have proper authorization: " +aex.getMessage());
+                this.setVisible(false);
+            }
         }
     }//GEN-LAST:event_addEventButtonActionPerformed
 
@@ -542,6 +559,9 @@ public class CalendarPanel extends javax.swing.JPanel {
                 {
                     JOptionPane.showMessageDialog(this, "Unable to remove event.");
                     System.out.println("Event deletion error in Calendar Panel: " + error.getMessage());
+                }catch(AuthorizationException aex)
+                {
+                    JOptionPane.showMessageDialog(this, "You do not have porper authorization for this content: " + aex.getMessage());
                 }
                 populateCalendar();
                 updateDetailsList((CalendarEvent) calendarTable.getValueAt(selectedRow, selectedColumn));

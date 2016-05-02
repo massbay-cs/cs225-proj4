@@ -68,12 +68,10 @@ public class Committee implements Reportable {
      */
     boolean isFinished() {
         boolean completed = true;
+        for (Task task : getTaskList())
+            if (!task.getCompleted())
+                completed = false;
 
-        try {
-            for (Task task : getTaskList())
-                if (!task.getCompleted())
-                    completed = false;
-        }catch (AuthorizationException authEx){}
         return completed;
     }
 
@@ -83,13 +81,11 @@ public class Committee implements Reportable {
 
         total = getTaskList().size();
 
-        try{
             for (Task aTaskList : getTaskList()) {
                 if (aTaskList.getCompleted()) {
                     completed++;
                 }
             }
-        }catch (AuthorizationException authEx){}
 
         return new int[]{completed, total};
     }
@@ -185,11 +181,9 @@ public class Committee implements Reportable {
         float complete = 0.0f;
         float total = taskList.size();
         for (Task t : taskList) {
-            try{
-                if (t.getCompleted()) {
-                    complete += 1;
-                }
-            }catch (AuthorizationException authEx){}
+            if (t.getCompleted()) {
+                complete += 1;
+            }
         }
         pct = (int) (complete / total * 100);
         return pct;

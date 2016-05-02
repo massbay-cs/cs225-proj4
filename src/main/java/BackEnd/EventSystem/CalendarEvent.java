@@ -73,17 +73,15 @@ public class CalendarEvent {
             events += "" + day;
             if (subEventList.size() <= 3) {
                 for (int i = 0; i < subEventList.size(); i++) {
-                    try(Permissions.SystemTransaction ignored = Permissions.get().beginSystemTransaction()) {
+                   // Permissions.SystemTransaction ignored = Permissions.get().beginSystemTransaction() {
+                    //not sure what this is for ^
                         events += "\n" + subEventList.get(i).getTitle();
-                    }
-                    catch(AuthorizationException ignored){}
+
                 }
             } else {
                 for (int i = 0; i < 3; i++) {
-                    try(Permissions.SystemTransaction ignored = Permissions.get().beginSystemTransaction()) {
+                    //try(Permissions.SystemTransaction ignored = Permissions.get().beginSystemTransaction()) {
                         events += "\n" + subEventList.get(i).getTitle();
-                    }
-                    catch(AuthorizationException ignored){}
                 }
                 events += "\n...";
             }

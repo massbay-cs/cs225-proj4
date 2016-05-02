@@ -65,7 +65,7 @@ public class AdministrationManagementPanel extends javax.swing.JPanel implements
                     setTable();
                 }catch(DoesNotExistException ex)
                 {
-                    System.out.println("That user cannot be found: " + ex.getMessage());
+                    System.out.println("This user cannot be found: " + ex.getMessage());
                 }
                 catch(auth.AuthorizationException aex)
                 {

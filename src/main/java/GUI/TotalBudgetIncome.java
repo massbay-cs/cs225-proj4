@@ -27,14 +27,13 @@ public class TotalBudgetIncome extends javax.swing.JPanel {
     
     private MainManager manager;
     
-    public TotalBudgetIncome() throws AuthorizationException{
+    public TotalBudgetIncome(){
         initComponents();
         manager = MainManager.getInstance();
         updateInfo();
     }
     
-    public void updateInfo()
-        throws AuthorizationException{
+    public void updateInfo() {
         DefaultTableModel model = getTableModel();
         model.setRowCount(0);
         

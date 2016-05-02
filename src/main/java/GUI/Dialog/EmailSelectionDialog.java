@@ -10,7 +10,7 @@ import BackEnd.UserSystem.Participant;
 import BackEnd.UserSystem.User;
 import java.util.ArrayList;
 import java.util.HashSet;
-import javax.swing.DefaultListModel;
+import javax.swing.*;
 
 /**
  *
@@ -68,15 +68,27 @@ public class EmailSelectionDialog extends javax.swing.JDialog {
         {
             if(o instanceof User)
             {
-                User u = (User)o;
-                addr.add(u.getEmailAddress());
+                try {
+                    User u = (User) o;
+                    addr.add(u.getEmailAddress());
+                }catch(auth.AuthorizationException aex)
+                {
+                    JOptionPane.showMessageDialog(this, "You do not have proper authorization: " + aex.getMessage());
+                    this.setVisible(false);
+                }
             }
             else if(o instanceof Committee)
             {
                 Committee c = (Committee)o;
                 for(User cu : c.getMemberList())
                 {
-                    addr.add(cu.getEmailAddress());
+                    try {
+                        addr.add(cu.getEmailAddress());
+                    }catch(auth.AuthorizationException aex)
+                    {
+                        JOptionPane.showMessageDialog(this, "You do not have proper authorization: " + aex.getMessage());
+                        this.setVisible(false);
+                    }
                 }
             }
         }

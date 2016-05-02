@@ -8,8 +8,8 @@ import GUI.Dialog.ExceptionDialogs.PasswordExceptionDialog;
 import BackEnd.ManagerSystem.ManagerExceptions.LogInIncorrectException;
 import BackEnd.ManagerSystem.MainManager;
 import GUI.Signup;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
+
+import javax.swing.*;
 import java.awt.event.KeyEvent;
 
 /**
@@ -48,6 +48,10 @@ public class LoginDialog extends javax.swing.JDialog {
         } catch (LogInIncorrectException e) {
             PasswordExceptionDialog passwordExceptionDialog = new PasswordExceptionDialog(new JFrame(), true, e);
             passwordExceptionDialog.setVisible(true);
+        }catch(auth.AuthorizationException aex)
+        {
+            JOptionPane.showMessageDialog(this, "You do not have proper authorization: " + aex.getMessage());
+            this.setVisible(false);
         }
     }
 

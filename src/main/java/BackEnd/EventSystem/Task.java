@@ -147,11 +147,8 @@ public class Task extends ScheduleItem implements Reportable {
         report.add("" + this.getDescription());
         report.add("" + this.getTitle());
         report.add("" + this.getLocation());
-         try {
-             report.add("" + this.getTimeSchedule().getEndDateTimeCalendar());
-             report.add("" + this.getTimeSchedule().getStartDateTimeCalendar());
-         }catch (AuthorizationException authEx){}
-
+        report.add("" + this.getTimeSchedule().getEndDateTimeCalendar());
+        report.add("" + this.getTimeSchedule().getStartDateTimeCalendar());
         return report;
     }
 }

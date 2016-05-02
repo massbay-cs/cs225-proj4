@@ -952,7 +952,6 @@ public class CommitteePanel extends javax.swing.JPanel {
               this.setFont(dd.getStandardText());
               if(value instanceof User) {
                   User u = (User) value;
-                  try {
                       if (manager.getCommitteeManager().getSelectedCommittee().getChair().equals(u)) {
                           setText(u.toString() + "(C)");
                           setBackground(Color.GREEN);
@@ -966,8 +965,7 @@ public class CommitteePanel extends javax.swing.JPanel {
                       if (isSelected) {
                           setBackground(dd.getListSelectionColor());
                       }
-                  } catch (AuthorizationException authEx) {
-                  }
+
               }
               return this;
           }
@@ -975,39 +973,31 @@ public class CommitteePanel extends javax.swing.JPanel {
     }
 
     class TasksCellRenderer extends JLabel implements ListCellRenderer {
-         public TasksCellRenderer() 
-         {
+        public TasksCellRenderer() {
             setOpaque(true);
-         }
-          public Component getListCellRendererComponent(JList list,
-                                                   Object value,
-                                                   int index,
-                                                   boolean isSelected,
-                                                   boolean cellHasFocus) 
-          {
-              this.setFont(dd.getStandardText());
-              if(value instanceof Task)
-              {
-                Task t = (Task)value;
-                  try{
-                if(t.getCompleted())
-                {
-                     setText(t.toString());
-                     setBackground(new Color(128,255,128));
-                }
-                else
-                {
-                     setText(t.toString());
-                     setBackground(new Color(255,128,128));
-                }
-                if(isSelected)
-                {
-                     setBackground(dd.getListSelectionColor());
-                }
-              }catch (AuthorizationException authEx){}}
-              return this;
-          }
-          
-    }
+        }
 
+        public Component getListCellRendererComponent(JList list,
+                                                      Object value,
+                                                      int index,
+                                                      boolean isSelected,
+                                                      boolean cellHasFocus) {
+            this.setFont(dd.getStandardText());
+            if (value instanceof Task) {
+                Task t = (Task) value;
+
+                if (t.getCompleted()) {
+                    setText(t.toString());
+                    setBackground(new Color(128, 255, 128));
+                } else {
+                    setText(t.toString());
+                    setBackground(new Color(255, 128, 128));
+                }
+                if (isSelected) {
+                    setBackground(dd.getListSelectionColor());
+                }
+            }
+            return this;
+        }
+    }
 }
