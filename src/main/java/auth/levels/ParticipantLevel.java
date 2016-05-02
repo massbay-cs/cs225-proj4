@@ -12,7 +12,7 @@ public class ParticipantLevel extends Level {
     @Override
     protected void checkPermissionUsers(Context context) throws AuthorizationException {
         switch (context.getFieldForSwitch()) {
-            case "level":
+            case "LEVEL":
                 context.cannotCreate();
                 context.cannotDeleteOther();
                 context.cannotModify();
@@ -24,7 +24,7 @@ public class ParticipantLevel extends Level {
 
                 break;
 
-            case "fName":
+            case "FNAME":
                 context.cannotCreate();
                 context.cannotDeleteOther();
                 context.cannotModifyOther();
@@ -32,7 +32,7 @@ public class ParticipantLevel extends Level {
 
                 break;
 
-            case "lName":
+            case "LNAME":
                 context.cannotCreate();
                 context.cannotDeleteOther();
                 context.cannotModifyOther();
@@ -48,7 +48,7 @@ public class ParticipantLevel extends Level {
 
                 break;
 
-            case "email":
+            case "EMAIL":
                 context.cannotCreate();
                 context.cannotDeleteOther();
                 context.cannotModifyOther();
@@ -56,7 +56,7 @@ public class ParticipantLevel extends Level {
 
                 break;
 
-            case "phone":
+            case "PHONE":
                 context.cannotCreate();
                 context.cannotDeleteOther();
                 context.cannotModifyOther();
@@ -65,7 +65,7 @@ public class ParticipantLevel extends Level {
                 break;
 
 
-            case "street":
+            case "STREET":
                 context.cannotCreate();
                 context.cannotDeleteOther();
                 context.cannotModifyOther();
@@ -73,24 +73,7 @@ public class ParticipantLevel extends Level {
 
                 break;
 
-            case "city":
-                context.cannotCreate();
-                context.cannotDeleteOther();
-                context.cannotModifyOther();
-                context.cannotViewOther(); // needs to be changed for people who agree to share information
-
-                break;
-
-
-            case "state":
-                context.cannotCreate();
-                context.cannotDeleteOther();
-                context.cannotModifyOther();
-                context.cannotViewOther(); // needs to be changed for people who agree to share information
-
-                break;
-
-            case "zipcode":
+            case "CITY":
                 context.cannotCreate();
                 context.cannotDeleteOther();
                 context.cannotModifyOther();
@@ -99,7 +82,24 @@ public class ParticipantLevel extends Level {
                 break;
 
 
-            case "country":
+            case "STATE":
+                context.cannotCreate();
+                context.cannotDeleteOther();
+                context.cannotModifyOther();
+                context.cannotViewOther(); // needs to be changed for people who agree to share information
+
+                break;
+
+            case "ZIPCODE":
+                context.cannotCreate();
+                context.cannotDeleteOther();
+                context.cannotModifyOther();
+                context.cannotViewOther(); // needs to be changed for people who agree to share information
+
+                break;
+
+
+            case "COUNTRY":
                 context.cannotCreate();
                 context.cannotDeleteOther();
                 context.cannotModifyOther();
@@ -133,7 +133,7 @@ public class ParticipantLevel extends Level {
 
                 break;
 
-            case "description":
+            case "DESCRIPTION":
                 context.cannotCreate();
                 context.cannotDelete();
                 context.cannotModify();
@@ -141,7 +141,7 @@ public class ParticipantLevel extends Level {
 
                 break;
 
-            case "details":
+            case "DETAILS":
                 context.cannotCreate();
                 context.cannotDelete();
                 context.cannotModify();
@@ -149,7 +149,7 @@ public class ParticipantLevel extends Level {
 
                 break;
 
-            case "title":
+            case "TITLE":
                 context.cannotCreate();
                 context.cannotDelete();
                 context.cannotModify();
@@ -157,7 +157,7 @@ public class ParticipantLevel extends Level {
 
                 break;
 
-            case "startDate":
+            case "STARTDATE":
                 context.cannotCreate();
                 context.cannotDelete();
                 context.cannotModify();
@@ -165,7 +165,7 @@ public class ParticipantLevel extends Level {
 
                 break;
 
-            case "endDate":
+            case "ENDDATE":
                 context.cannotCreate();
                 context.cannotDelete();
                 context.cannotModify();
@@ -173,7 +173,7 @@ public class ParticipantLevel extends Level {
 
                 break;
 
-            case "complete":
+            case "COMPLETE":
                 context.cannotCreate();
                 context.cannotDelete();
                 context.cannotModify();
@@ -181,7 +181,7 @@ public class ParticipantLevel extends Level {
 
                 break;
 
-            case "street":
+            case "STREET":
                 context.cannotCreate();
                 context.cannotDelete();
                 context.cannotModify();
@@ -189,24 +189,7 @@ public class ParticipantLevel extends Level {
 
                 break;
 
-            case "city":
-                context.cannotCreate();
-                context.cannotDelete();
-                context.cannotModify();
-                // is there a need to deny viewing this field for events not participating in?
-
-                break;
-
-
-            case "state":
-                context.cannotCreate();
-                context.cannotDelete();
-                context.cannotModify();
-                // is there a need to deny viewing this field for events not participating in?
-
-                break;
-
-            case "zipcode":
+            case "CITY":
                 context.cannotCreate();
                 context.cannotDelete();
                 context.cannotModify();
@@ -215,7 +198,48 @@ public class ParticipantLevel extends Level {
                 break;
 
 
-            case "country":
+            case "STATE":
+                context.cannotCreate();
+                context.cannotDelete();
+                context.cannotModify();
+                // is there a need to deny viewing this field for events not participating in?
+
+                break;
+
+            case "ZIPCODE":
+                context.cannotCreate();
+                context.cannotDelete();
+                context.cannotModify();
+                // is there a need to deny viewing this field for events not participating in?
+
+                break;
+
+
+            case "COUNTRY":
+                context.cannotCreate();
+                context.cannotDelete();
+                context.cannotModify();
+                // is there a need to deny viewing this field for events not participating in?
+
+                break;
+
+            case "ORGANIZER":
+                context.cannotCreate();
+                context.cannotDelete();
+                context.cannotModify();
+                // is there a need to deny viewing this field for events not participating in?
+
+                break;
+
+            case "SUBEVENT":
+                context.cannotCreate();
+                context.cannotDelete();
+                context.cannotModify();
+                // is there a need to deny viewing this field for events not participating in?
+
+                break;
+
+            case "PARTICIPANT":
                 context.cannotCreate();
                 context.cannotDelete();
                 context.cannotModify();
@@ -247,7 +271,7 @@ public class ParticipantLevel extends Level {
 
                 break;
 
-            case "committee":
+            case "COMMITTEE":
                 context.cannotCreate();
                 context.cannotDelete();
                 context.cannotModify();
@@ -265,7 +289,7 @@ public class ParticipantLevel extends Level {
     @Override
     protected void checkPermissionSubEvents(Context context) throws AuthorizationException {
         switch (context.getFieldForSwitch()) {
-            case "description":
+            case "DESCRIPTION":
                 context.cannotCreate();
                 context.cannotDelete();
                 context.cannotModify();
@@ -273,7 +297,7 @@ public class ParticipantLevel extends Level {
 
                 break;
 
-            case "details":
+            case "DETAILS":
                 context.cannotCreate();
                 context.cannotDelete();
                 context.cannotModify();
@@ -281,7 +305,7 @@ public class ParticipantLevel extends Level {
 
                 break;
 
-            case "title":
+            case "TITLE":
                 context.cannotCreate();
                 context.cannotDelete();
                 context.cannotModify();
@@ -289,7 +313,7 @@ public class ParticipantLevel extends Level {
 
                 break;
 
-            case "complete":
+            case "COMPLETE":
                 context.cannotCreate();
                 context.cannotDelete();
                 context.cannotModify();
@@ -297,7 +321,7 @@ public class ParticipantLevel extends Level {
 
                 break;
 
-            case "street":
+            case "STREET":
                 context.cannotCreate();
                 context.cannotDelete();
                 context.cannotModify();
@@ -305,24 +329,7 @@ public class ParticipantLevel extends Level {
 
                 break;
 
-            case "city":
-                context.cannotCreate();
-                context.cannotDelete();
-                context.cannotModify();
-                // is there a need to deny viewing this field for events not participating in?
-
-                break;
-
-
-            case "state":
-                context.cannotCreate();
-                context.cannotDelete();
-                context.cannotModify();
-                // is there a need to deny viewing this field for events not participating in?
-
-                break;
-
-            case "zipcode":
+            case "CITY":
                 context.cannotCreate();
                 context.cannotDelete();
                 context.cannotModify();
@@ -331,7 +338,40 @@ public class ParticipantLevel extends Level {
                 break;
 
 
-            case "country":
+            case "STATE":
+                context.cannotCreate();
+                context.cannotDelete();
+                context.cannotModify();
+                // is there a need to deny viewing this field for events not participating in?
+
+                break;
+
+            case "ZIPCODE":
+                context.cannotCreate();
+                context.cannotDelete();
+                context.cannotModify();
+                // is there a need to deny viewing this field for events not participating in?
+
+                break;
+
+
+            case "COUNTRY":
+                context.cannotCreate();
+                context.cannotDelete();
+                context.cannotModify();
+                // is there a need to deny viewing this field for events not participating in?
+
+                break;
+
+            case "STARTDATE":
+                context.cannotCreate();
+                context.cannotDelete();
+                context.cannotModify();
+                // is there a need to deny viewing this field for events not participating in?
+
+                break;
+
+            case "ENDDATE":
                 context.cannotCreate();
                 context.cannotDelete();
                 context.cannotModify();
@@ -367,46 +407,46 @@ public class ParticipantLevel extends Level {
     @Override
     protected void checkPermissionCommittee(Context context) throws AuthorizationException {
         switch (context.getFieldForSwitch()) {
-            case "title":
+            case "TITLE":
                 context.cannotCreate();
                 context.cannotDelete();
                 context.cannotModify();
 
                 break;
 
-            case "chairman":
+            case "CHAIRMAN":
                 context.cannotCreate();
                 context.cannotDelete();
                 context.cannotModify();
 
                 break;
 
-            case "budgetaccess":
+            case "BUDGETACCESS":
                 context.noAccess();
 
                 break;
 
-            case "members":
+            case "MEMBERS":
                 context.noAccess();
 
                 break;
 
-            case "tasks":
+            case "TASKS":
                 context.noAccess();
 
                 break;
 
-            case "income":
+            case "INCOME":
                 context.noAccess();
 
                 break;
 
-            case "expense":
+            case "EXPENSE":
                 context.noAccess();
 
                 break;
 
-            case "budget":
+            case "BUDGET":
                 context.noAccess();
 
                 break;
@@ -423,64 +463,68 @@ public class ParticipantLevel extends Level {
     @Override
     protected void checkPermissionTasks(Context context) throws AuthorizationException {
         switch (context.getFieldForSwitch()) {
-            case "description":
+            case "DESCRIPTION":
                 context.noAccess();
 
                 break;
 
-            case "details":
+            case "DETAILS":
                 context.noAccess();
 
                 break;
 
-            case "title":
-                context.noAccess();
-
-                break;
-
-
-            case "street":
-                context.noAccess();
-
-                break;
-
-            case "city":
+            case "TITLE":
                 context.noAccess();
 
                 break;
 
 
-            case "state":
+            case "STREET":
                 context.noAccess();
 
                 break;
 
-            case "zipcode":
+            case "CITY":
                 context.noAccess();
 
                 break;
 
 
-            case "country":
+            case "STATE":
                 context.noAccess();
 
                 break;
 
-            case "startDate":
+            case "ZIPCODE":
                 context.noAccess();
 
                 break;
 
-            case "endDate":
+
+            case "COUNTRY":
                 context.noAccess();
 
                 break;
 
-            case "complete":
+            case "STARTDATE":
                 context.noAccess();
 
                 break;
 
+            case "ENDDATE":
+                context.noAccess();
+
+                break;
+
+            case "COMPLETE":
+                context.noAccess();
+
+                break;
+
+            case "MANAGER":
+                context.noAccess();
+
+                break;
 
 
             // TODO
@@ -493,7 +537,12 @@ public class ParticipantLevel extends Level {
     @Override
     protected void checkPermissionIncome(Context context) throws AuthorizationException {
         switch (context.getFieldForSwitch()) {
-            case "description":
+            case "DESCRIPTION":
+                context.noAccess();
+
+                break;
+
+            case "DATE":
                 context.noAccess();
 
                 break;
@@ -503,7 +552,7 @@ public class ParticipantLevel extends Level {
 
                 break;
 
-            case "value":
+            case "VALUE":
                 context.noAccess();
 
                 break;
@@ -520,17 +569,17 @@ public class ParticipantLevel extends Level {
     @Override
     protected void checkPermissionExpense(Context context) throws AuthorizationException {
         switch (context.getFieldForSwitch()) {
-            case "description":
+            case "DESCRIPTION":
                 context.noAccess();
 
                 break;
 
-            case "date":
+            case "DATE":
                 context.noAccess();
 
                 break;
 
-            case "value":
+            case "VALUE":
                 context.noAccess();
 
                 break;
