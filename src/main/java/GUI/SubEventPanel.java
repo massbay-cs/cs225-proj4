@@ -27,7 +27,7 @@ public class SubEventPanel extends javax.swing.JPanel {
     /**
      * Creates new form SubEventPanel
      */
-    public SubEventPanel(SubEvent e) throws AuthorizationException{
+    public SubEventPanel(SubEvent e){
         initComponents();
         se = e;
         if (e.getTimeSchedule() != null)
@@ -66,7 +66,7 @@ public class SubEventPanel extends javax.swing.JPanel {
         startDateLabel.setText("Start Date: " + tempTimeSchedule.getStartDateTimeTimestamp().toString());
     }
     
-    public SubEvent createEvent() throws AuthorizationException
+    public SubEvent createEvent()
     {
         SubEvent e = new SubEvent(nameField.getText());
         e.setTimeSchedule(tempTimeSchedule);
@@ -184,7 +184,7 @@ public class SubEventPanel extends javax.swing.JPanel {
         updateLabels();
     }//GEN-LAST:event_editTimeScheduleButtonActionPerformed
 
-    private void updateLabels() throws AuthorizationException
+    private void updateLabels()
     {
         dueDateLabel.setText("Due date: " + tempTimeSchedule.getEndDateTimeTimestamp().toString());
         startDateLabel.setText("Start date: " + tempTimeSchedule.getStartDateTimeTimestamp().toString());

@@ -29,11 +29,17 @@ public class CommitteeBudgetIncome extends javax.swing.JPanel {
      * Creates new form IncomePanel
      */
     private MainManager manager;
-    public CommitteeBudgetIncome() throws AuthorizationException{
+    public CommitteeBudgetIncome(){
         manager = MainManager.getInstance();
         selectedBudget = manager.getBudgetManager().getSelectedBudget();
-        initComponents();
-        updateInfo();
+        try {
+            initComponents();
+            updateInfo();
+        }catch(AuthorizationException aex)
+        {
+            JOptionPane.showMessageDialog(this, "You do not have proper authorization: " + aex.getMessage());
+            this.setVisible(false);
+        }
         
     }
     

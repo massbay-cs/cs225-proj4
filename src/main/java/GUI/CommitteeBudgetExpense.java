@@ -31,11 +31,17 @@ public class CommitteeBudgetExpense extends javax.swing.JPanel {
     private MainManager manager;
     private Budget selectedBudget;
     
-    public CommitteeBudgetExpense() throws AuthorizationException{
+    public CommitteeBudgetExpense(){
         manager = MainManager.getInstance();
         selectedBudget = manager.getBudgetManager().getSelectedBudget();
-        initComponents();
-        updateInfo();
+        try {
+            initComponents();
+            updateInfo();
+        }catch(AuthorizationException aex)
+        {
+            JOptionPane.showMessageDialog(this, "You do not have proper authorization: " + aex.getMessage());
+            this.setVisible(false);
+        }
     }
     
     public void updateInfo() throws AuthorizationException

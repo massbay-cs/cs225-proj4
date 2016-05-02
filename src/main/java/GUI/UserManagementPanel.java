@@ -499,34 +499,44 @@ public class UserManagementPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void passwordButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passwordButtonActionPerformed
-        if(JOptionPane.showInputDialog("Please enter your current password:").equals(selectedUser.getPassword()))
-        {
-            String newPass =JOptionPane.showInputDialog("Please enter your new password:");
-            try {
-            manager.getUserManager().editPassword(newPass, newPass);
-            }
-            catch (PrivilegeInsufficientException ex) {
-                Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IllegalCharacterException ex) {
-                Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (PasswordMismatchError ex) {
-                Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (DoesNotExistException ex) {
-                Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (InvalidKeyException ex) {
-                Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (UnsupportedEncodingException ex) {
-                Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IllegalBlockSizeException ex) {
-                Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (BadPaddingException ex) {
-                Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        else
-        {
-            JOptionPane.showMessageDialog(null, "Incorrect Password");
-        }
+       try {
+
+
+           if (JOptionPane.showInputDialog("Please enter your current password:").equals(selectedUser.getPassword())) {
+               String newPass = JOptionPane.showInputDialog("Please enter your new password:");
+               try {
+                   manager.getUserManager().editPassword(newPass, newPass);
+               } catch (PrivilegeInsufficientException ex) {
+                   Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
+               } catch (IllegalCharacterException ex) {
+                   Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
+               } catch (PasswordMismatchError ex) {
+                   Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
+               } catch (DoesNotExistException ex) {
+                   Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
+               } catch (InvalidKeyException ex) {
+                   Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
+               } catch (UnsupportedEncodingException ex) {
+                   Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
+               } catch (IllegalBlockSizeException ex) {
+                   Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
+               } catch (BadPaddingException ex) {
+                   Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, ex);
+               } catch (UpdateException uex) {
+                   Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, uex.getMessage());
+               } catch (auth.AuthorizationException aex) {
+                   Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, aex.getMessage());
+               }
+           }
+           else
+           {
+               JOptionPane.showMessageDialog(null, "Incorrect Password");
+           }
+       }catch(auth.AuthorizationException aex)
+       {
+           Logger.getLogger(UserManagementPanel.class.getName()).log(Level.SEVERE, null, aex.getMessage());
+       }
+
     }//GEN-LAST:event_passwordButtonActionPerformed
 
     private void changeInfoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeInfoButtonActionPerformed
@@ -562,7 +572,8 @@ public class UserManagementPanel extends javax.swing.JPanel {
                     if (eventBox.isSelected()) {
                         manager.getUserManager().editPrivilegeLevel(PrivilegeLevel.COMMITTEE_LEADER);
                     } else {
-                        manager.getUserManager().editEventCreationPrivilege(false);
+                       //not really sure what any of this is for
+                        // manager.getUserManager().editEventCreationPrivilege(false);
                     }
                 }
             } catch (PrivilegeInsufficientException ex) 
@@ -706,12 +717,7 @@ private void countryFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:e
     class UserListSelectionListener implements ListSelectionListener {
     public void valueChanged(ListSelectionEvent e){
         manager.getUserManager().setSelectedUser((User)userList.getSelectedValue());
-        try{
-            updateLabels();
-        }catch (AuthorizationException ignore ){
-            JOptionPane pane  = new JOptionPane();
-            pane.showMessageDialog(null, "You lack Proper authorization!");
+        updateLabels();
         }
-    }
     }
 }

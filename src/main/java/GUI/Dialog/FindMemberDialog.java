@@ -39,11 +39,16 @@ public class FindMemberDialog extends javax.swing.JDialog {
     public void updateInfo()
     {
         DefaultListModel model = new DefaultListModel();
-        for(Participant p : manager.getUserManager().getUserList())
+        try {
+            for (Participant p : manager.getUserManager().getUserList()) {
+                model.addElement(p.getFirstName() + " " + p.getLastName());
+            }
+            memberList.setModel(model);
+        }catch(auth.AuthorizationException aex)
         {
-            model.addElement(p.getFirstName() + " " + p.getLastName());
+            System.out.println("You do not have proper authorization: " + aex.getMessage());
+            model.clear();
         }
-        memberList.setModel(model);
     }
     
     public boolean getConfirm()
