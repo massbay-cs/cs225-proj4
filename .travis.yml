@@ -44,6 +44,7 @@ deploy:
       repo: massbay-cs/cs225-proj4
       tags: true
       jdk: oraclejdk8
+      all_branches: true
 notifications:
   webhooks:
     urls:
