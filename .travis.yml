@@ -2,17 +2,17 @@
 sudo: false
 language: java
 jdk:
-- oraclejdk8
-#- openjdk8  # Not yet supported: https://docs.travis-ci.com/user/languages/java
+  - oraclejdk8
+  #- openjdk8  # Not yet supported: https://docs.travis-ci.com/user/languages/java
 git:
   depth: 1
 branches:
   except:
-  - authorization
+    - 'archive/*'
 cache:
   timeout: 60
   directories:
-  - "$HOME/.m2"
+    - "$HOME/.m2"
 
 install: true
 script: 'mvn package -B'
